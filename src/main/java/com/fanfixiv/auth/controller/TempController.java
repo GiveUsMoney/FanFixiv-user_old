@@ -11,7 +11,7 @@ public class TempController {
   private static int ID = 0;
 
   @GetMapping("/")
-  public TempEntity temporary(@RequestParam(defaultValue = "Hello World!") String name) {
-    return new TempEntity(ID++, name);
+  public TempEntity temporary(@RequestParam(defaultValue = "Hello World!") String content) {
+    return new TempEntity(ID++, content);
   }
 }
