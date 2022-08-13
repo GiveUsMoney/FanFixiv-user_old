@@ -27,7 +27,7 @@ public class AuthE2ETests {
         .then()
         .statusCode(200)
         .assertThat()
-        .body("content", equalTo("Hello World!"))
+        .body("content", equalTo("Hello World!!!"))
         .body("id", equalTo(0));
   }
 }
