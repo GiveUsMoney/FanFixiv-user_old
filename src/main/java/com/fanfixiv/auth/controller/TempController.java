@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class TempController {
 
-  private static int ID = 0;
+  private static int ID = 1;
 
   @GetMapping("/")
   public TempEntity temporary(@RequestParam(defaultValue = "Hello World!") String content) {

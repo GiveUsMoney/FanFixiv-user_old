@@ -28,6 +28,6 @@ public class AuthE2ETests {
         .statusCode(200)
         .assertThat()
         .body("content", equalTo("Hello World!"))
-        .body("id", equalTo(0));
+        .body("id", equalTo(1));
   }
 }
