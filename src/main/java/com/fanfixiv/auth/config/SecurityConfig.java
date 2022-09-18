@@ -37,10 +37,8 @@ public class SecurityConfig {
     http.authorizeRequests()
         .antMatchers("/login", "/register")
         .permitAll() // 로그인 회원가입은 보안 해제
-        .antMatchers("/test")
-        .authenticated() // 테스트용 보안
         .anyRequest()
-        .permitAll();
+        .authenticated();
 
     http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
