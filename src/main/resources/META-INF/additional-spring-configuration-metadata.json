@@ -1,0 +1,14 @@
+{
+  "properties": [
+    {
+      "name": "jwt.tokenvalidtime",
+      "type": "java.lang.Long",
+      "description": "JWT 만료 시간"
+    },
+    {
+      "name": "jwt.secret",
+      "type": "java.lang.String",
+      "description": "JWT 보안 코드"
+    }
+  ]
+}
