@@ -13,7 +13,7 @@ public class TempController {
 
   private static int ID = 0;
 
-  @GetMapping("/test")
+  @GetMapping("/")
   @ApiOperation(value = "임시 API")
   public TempEntity temporary(@RequestParam(defaultValue = "Hello World!!!") String content) {
     return new TempEntity(ID++, content);

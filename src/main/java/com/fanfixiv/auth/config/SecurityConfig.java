@@ -1,6 +1,7 @@
 package com.fanfixiv.auth.config;
 
 import com.fanfixiv.auth.filter.JwtAuthenticationFilter;
+import com.fanfixiv.auth.handler.CustomAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -8,6 +9,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -24,6 +26,11 @@ public class SecurityConfig {
   }
 
   @Bean
+  public AuthenticationEntryPoint authenticationEntryPoint() {
+    return new CustomAuthenticationEntryPoint();
+  }
+
+  @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
     http.httpBasic().disable(); // Http Basic을 이용한 보안 해제
@@ -35,10 +42,13 @@ public class SecurityConfig {
             SessionCreationPolicy
                 .STATELESS); // jwt token으로 인증하므로 stateless(인증정보를 서버에 남기지 않음) 하도록 처리.
     http.authorizeRequests()
-        .antMatchers("/login", "/register")
+        .antMatchers("/login", "/register", "/")
         .permitAll() // 로그인 회원가입은 보안 해제
         .anyRequest()
-        .authenticated();
+        .authenticated()
+        .and()
+        .exceptionHandling()
+        .authenticationEntryPoint(authenticationEntryPoint());
 
     http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
