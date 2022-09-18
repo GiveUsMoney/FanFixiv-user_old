@@ -1,4 +1,4 @@
-package com.fanfixiv.auth.domain;
+package com.fanfixiv.auth.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
