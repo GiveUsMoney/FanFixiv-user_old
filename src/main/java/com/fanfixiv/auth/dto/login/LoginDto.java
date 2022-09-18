@@ -1,5 +1,6 @@
 package com.fanfixiv.auth.dto.login;
 
+import javax.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,6 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class LoginDto {
 
-  private String id;
-  private String pw;
+  @NotEmpty private String id;
+  @NotEmpty private String pw;
 }
