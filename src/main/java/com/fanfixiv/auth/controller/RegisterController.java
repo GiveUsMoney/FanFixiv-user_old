@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/register")
 public class RegisterController {
 
-  @Autowired public RegisterService registerService;
+  @Autowired private RegisterService registerService;
 
   @PostMapping("/")
   public RegisterResultDto register(@RequestBody @Valid RegisterDto registerDto) {
