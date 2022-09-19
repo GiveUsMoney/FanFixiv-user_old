@@ -1,6 +1,7 @@
 package com.fanfixiv.auth.controller;
 
 import com.fanfixiv.auth.dto.register.CertEmailResultDto;
+import com.fanfixiv.auth.dto.register.CertNumberResultDto;
 import com.fanfixiv.auth.dto.register.DoubleCheckDto;
 import com.fanfixiv.auth.dto.register.RegisterDto;
 import com.fanfixiv.auth.dto.register.RegisterResultDto;
@@ -35,5 +36,10 @@ public class RegisterController {
   @GetMapping("/cert-email")
   public CertEmailResultDto certEmail(@RequestParam String email) {
     return new CertEmailResultDto();
+  }
+
+  @GetMapping("/cert-number")
+  public CertNumberResultDto certNumber(@RequestParam String number) {
+    return new CertNumberResultDto(true);
   }
 }
