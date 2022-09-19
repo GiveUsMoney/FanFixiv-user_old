@@ -43,8 +43,9 @@ public class SecurityConfig {
             SessionCreationPolicy
                 .STATELESS); // jwt token으로 인증하므로 stateless(인증정보를 서버에 남기지 않음) 하도록 처리.
     http.authorizeRequests()
-        .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-        .antMatchers("/login", "/register/**", "/")
+        .antMatchers(HttpMethod.OPTIONS, "/**")
+        .permitAll()
+        .antMatchers("/login", "/register/**", "/", "/redis")
         .permitAll() // 로그인 회원가입은 보안 해제
         .anyRequest()
         .authenticated()

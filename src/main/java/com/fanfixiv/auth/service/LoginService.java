@@ -5,6 +5,7 @@ import com.fanfixiv.auth.dto.login.LoginResultDto;
 import com.fanfixiv.auth.entity.UserEntity;
 import com.fanfixiv.auth.filter.JwtTokenProvider;
 import com.fanfixiv.auth.repository.UserRepository;
+import com.fanfixiv.auth.utils.HashProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -25,7 +26,11 @@ public class LoginService {
 
     UserEntity user = userRepository.findByEmail(loginDto.getId());
 
-    if (!user.getPw().equals(loginDto.getPw())) {
+    String salt = user.getSalt();
+
+    String pw = HashProvider.hashString(loginDto.getPw(), salt);
+
+    if (!user.getPw().equals(pw)) {
       throw new BadCredentialsException("비밀번호가 불일치 합니다.");
     }
 

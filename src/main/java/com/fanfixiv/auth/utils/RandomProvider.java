@@ -2,9 +2,7 @@ package com.fanfixiv.auth.utils;
 
 import java.util.Random;
 import java.util.UUID;
-import org.springframework.stereotype.Component;
 
-@Component
 public class RandomProvider {
 
   private static Random random = new Random();

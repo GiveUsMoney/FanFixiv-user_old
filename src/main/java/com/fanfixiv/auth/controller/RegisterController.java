@@ -1,6 +1,8 @@
 package com.fanfixiv.auth.controller;
 
+import com.fanfixiv.auth.dto.register.CertEmailDto;
 import com.fanfixiv.auth.dto.register.CertEmailResultDto;
+import com.fanfixiv.auth.dto.register.CertNumberDto;
 import com.fanfixiv.auth.dto.register.CertNumberResultDto;
 import com.fanfixiv.auth.dto.register.DoubleCheckDto;
 import com.fanfixiv.auth.dto.register.RegisterDto;
@@ -8,12 +10,14 @@ import com.fanfixiv.auth.dto.register.RegisterResultDto;
 import com.fanfixiv.auth.service.RegisterService;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -23,9 +27,10 @@ public class RegisterController {
 
   @Autowired private RegisterService registerService;
 
-  @PostMapping("/")
+  @PostMapping("")
+  @ResponseStatus(code = HttpStatus.CREATED)
   public RegisterResultDto register(@RequestBody @Valid RegisterDto registerDto) {
-    return new RegisterResultDto();
+    return registerService.register(registerDto);
   }
 
   @GetMapping("/dc-nick")
@@ -34,12 +39,12 @@ public class RegisterController {
   }
 
   @GetMapping("/cert-email")
-  public CertEmailResultDto certEmail(@RequestParam String email) {
-    return new CertEmailResultDto();
+  public CertEmailResultDto certEmail(@Valid CertEmailDto dto) {
+    return registerService.certEmail(dto.getEmail());
   }
 
   @GetMapping("/cert-number")
-  public CertNumberResultDto certNumber(@RequestParam String number) {
-    return new CertNumberResultDto(true);
+  public CertNumberResultDto certNumber(@Valid CertNumberDto dto) {
+    return registerService.certNumber(dto);
   }
 }

@@ -1,15 +1,101 @@
 package com.fanfixiv.auth.service;
 
+import com.fanfixiv.auth.dto.register.CertEmailResultDto;
+import com.fanfixiv.auth.dto.register.CertNumberDto;
+import com.fanfixiv.auth.dto.register.CertNumberResultDto;
 import com.fanfixiv.auth.dto.register.DoubleCheckDto;
+import com.fanfixiv.auth.dto.register.RegisterDto;
+import com.fanfixiv.auth.dto.register.RegisterResultDto;
+import com.fanfixiv.auth.entity.ProfileEntity;
+import com.fanfixiv.auth.entity.UserEntity;
+import com.fanfixiv.auth.exception.DuplicateException;
 import com.fanfixiv.auth.repository.ProfileRepository;
+import com.fanfixiv.auth.repository.UserRepository;
+import com.fanfixiv.auth.utils.HashProvider;
+import com.fanfixiv.auth.utils.RandomProvider;
+import com.fanfixiv.auth.utils.TimeProvider;
+import java.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
 @Service
 public class RegisterService {
   @Autowired private ProfileRepository profileRepository;
 
+  @Autowired private UserRepository userRepository;
+
+  @Autowired private RedisTemplate<String, String> redisTemplate;
+
+  public RegisterResultDto register(RegisterDto dto) {
+    if (userRepository.existsByEmail(dto.getEmail())) {
+      throw new DuplicateException("이미 사용중인 이메일입니다.");
+    }
+    if (profileRepository.existsByNickname(dto.getNickname())) {
+      throw new DuplicateException("이미 사용중인 닉네임입니다.");
+    }
+    String success = redisTemplate.opsForValue().get(dto.getUuid());
+    if (success == null || "success".equals(success)) {
+      throw new DuplicateException("본인인증이 되어있지 않습니다.");
+    }
+
+    String salt = HashProvider.getSalt();
+
+    ProfileEntity profile =
+        ProfileEntity.builder().nickname(dto.getNickname()).is_tr(false).build();
+
+    UserEntity user =
+        UserEntity.builder()
+            .email(dto.getEmail())
+            .pw(HashProvider.hashString(dto.getPw(), salt))
+            .salt(salt)
+            .profile(profile)
+            .build();
+
+    userRepository.save(user);
+
+    return new RegisterResultDto("성공적으로 회원가입되었습니다.");
+  }
+
   public DoubleCheckDto checkNickDouble(String nickname) {
     return new DoubleCheckDto(profileRepository.existsByNickname(nickname));
+  }
+
+  public CertEmailResultDto certEmail(String email) {
+    if (userRepository.existsByEmail(email)) {
+      throw new DuplicateException("이미 사용중인 이메일입니다.");
+    }
+
+    String uuid = RandomProvider.getUUID();
+    String number = RandomProvider.getRandomNumber();
+    LocalDateTime expireTime = TimeProvider.getTimeAfter3min();
+
+    // TODO: 이메일 전송 부분으로 변경
+    System.out.println(number);
+
+    ValueOperations<String, String> vo = redisTemplate.opsForValue();
+    vo.set(uuid, number);
+    redisTemplate.expireAt(uuid, java.sql.Timestamp.valueOf(expireTime));
+
+    return new CertEmailResultDto(uuid, expireTime);
+  }
+
+  public CertNumberResultDto certNumber(CertNumberDto dto) {
+    String number = redisTemplate.opsForValue().get(dto.getUuid());
+
+    if (number == null) {
+      return new CertNumberResultDto(false);
+    }
+
+    boolean result = number.equals(dto.getNumber());
+
+    if (result) {
+      this.redisTemplate.opsForValue().set(dto.getUuid(), "success");
+      this.redisTemplate.expireAt(
+          dto.getUuid(), java.sql.Timestamp.valueOf(TimeProvider.getTimeAfter1hour()));
+    }
+
+    return new CertNumberResultDto(result);
   }
 }
