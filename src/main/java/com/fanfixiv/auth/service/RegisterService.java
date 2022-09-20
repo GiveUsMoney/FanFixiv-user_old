@@ -15,6 +15,8 @@ import com.fanfixiv.auth.utils.HashProvider;
 import com.fanfixiv.auth.utils.RandomProvider;
 import com.fanfixiv.auth.utils.TimeProvider;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -28,6 +30,8 @@ public class RegisterService {
 
   @Autowired private RedisTemplate<String, String> redisTemplate;
 
+  @Autowired private MailService mailService;
+
   public RegisterResultDto register(RegisterDto dto) {
     if (userRepository.existsByEmail(dto.getEmail())) {
       throw new DuplicateException("이미 사용중인 이메일입니다.");
@@ -36,7 +40,7 @@ public class RegisterService {
       throw new DuplicateException("이미 사용중인 닉네임입니다.");
     }
     String success = redisTemplate.opsForValue().get(dto.getUuid());
-    if (success == null || "success".equals(success)) {
+    if (success == null || !"success".equals(success)) {
       throw new DuplicateException("본인인증이 되어있지 않습니다.");
     }
 
@@ -71,8 +75,14 @@ public class RegisterService {
     String number = RandomProvider.getRandomNumber();
     LocalDateTime expireTime = TimeProvider.getTimeAfter3min();
 
-    // TODO: 이메일 전송 부분으로 변경
-    System.out.println(number);
+    List<String> sendTo =
+        new ArrayList<String>() {
+          {
+            add(email);
+          }
+        };
+
+    mailService.sendMail("회원가입 이메일", number, sendTo);
 
     ValueOperations<String, String> vo = redisTemplate.opsForValue();
     vo.set(uuid, number);
