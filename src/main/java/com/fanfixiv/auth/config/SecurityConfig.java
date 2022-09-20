@@ -2,6 +2,7 @@ package com.fanfixiv.auth.config;
 
 import com.fanfixiv.auth.filter.JwtAuthenticationFilter;
 import com.fanfixiv.auth.handler.CustomAuthenticationEntryPoint;
+import java.util.Arrays;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -13,6 +14,9 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @RequiredArgsConstructor
 @EnableWebSecurity
@@ -32,11 +36,25 @@ public class SecurityConfig {
   }
 
   @Bean
+  public CorsConfigurationSource corsConfigurationSource() {
+    CorsConfiguration configuration = new CorsConfiguration();
+
+    configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000/"));
+    configuration.addAllowedHeader("*");
+    configuration.addAllowedMethod("*");
+    configuration.setAllowCredentials(true);
+
+    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    source.registerCorsConfiguration("/**", configuration);
+    return source;
+  }
+
+  @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
     http.httpBasic().disable(); // Http Basic을 이용한 보안 해제
     http.formLogin().disable(); // 기본 Login Form 해제
-    http.cors().disable(); // CORS 보안 해제
+    // http.cors().disable(); // CORS 보안 해제
     http.csrf().disable(); // CSRF 보안 해제
     http.sessionManagement()
         .sessionCreationPolicy(

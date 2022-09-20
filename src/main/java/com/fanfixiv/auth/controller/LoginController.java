@@ -5,6 +5,7 @@ import com.fanfixiv.auth.dto.login.LoginResultDto;
 import com.fanfixiv.auth.dto.profile.ProfileResultDto;
 import com.fanfixiv.auth.service.LoginService;
 import java.security.Principal;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -21,8 +22,9 @@ public class LoginController {
   @Autowired LoginService loginService;
 
   @PostMapping("/login")
-  public LoginResultDto login(@RequestBody @Valid LoginDto loginDto) throws Exception {
-    return loginService.doLogin(loginDto);
+  public LoginResultDto login(HttpServletResponse response, @RequestBody @Valid LoginDto loginDto)
+      throws Exception {
+    return loginService.doLogin(response, loginDto);
   }
 
   @GetMapping("/profile")
