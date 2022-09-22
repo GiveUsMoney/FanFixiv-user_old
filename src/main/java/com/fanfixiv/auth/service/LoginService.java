@@ -8,6 +8,7 @@ import com.fanfixiv.auth.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,6 +18,8 @@ public class LoginService {
 
   @Autowired UserRepository userRepository;
 
+  @Autowired BCryptPasswordEncoder passwordEncoder;
+
   public LoginResultDto doLogin(LoginDto loginDto) throws Exception {
 
     if (!userRepository.existsByEmail(loginDto.getId())) {
@@ -25,7 +28,7 @@ public class LoginService {
 
     UserEntity user = userRepository.findByEmail(loginDto.getId());
 
-    if (!user.getPw().equals(loginDto.getPw())) {
+    if (!user.checkPassword(loginDto.getPw(), passwordEncoder)) {
       throw new BadCredentialsException("비밀번호가 불일치 합니다.");
     }
 
