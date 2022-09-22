@@ -47,6 +47,7 @@ dependencies {
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
   testImplementation 'org.springframework.security:spring-security-test'
+  testImplementation group: 'com.h2database', name: 'h2', version: '2.1.214'
 	testImplementation 'io.rest-assured:rest-assured'
 
 }
