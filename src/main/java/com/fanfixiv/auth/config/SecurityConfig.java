@@ -26,7 +26,10 @@ public class SecurityConfig {
   @Bean
   public WebSecurityCustomizer configure() {
     // 해당 path들은 Security의 적용을 받지않음. -> 애초에 실제 배포 단계에서 있으면 안됨.
-    return (web) -> web.ignoring().mvcMatchers("/swagger-ui.html");
+    return (web) ->
+        web.ignoring()
+            .mvcMatchers(
+                "/swagger-ui.html/**", "/webjars/**", "/swagger-resources/**", "/v2/api-docs");
   }
 
   @Bean
