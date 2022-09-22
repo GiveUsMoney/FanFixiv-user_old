@@ -7,23 +7,25 @@ import com.fanfixiv.auth.filter.JwtTokenProvider;
 import com.fanfixiv.auth.repository.UserRepository;
 import com.fanfixiv.auth.utils.HashProvider;
 
+import lombok.RequiredArgsConstructor;
+
 import java.util.Date;
 
 import javax.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class LoginService {
 
-  @Autowired JwtTokenProvider jwtTokenProvider;
+  private final JwtTokenProvider jwtTokenProvider;
 
-  @Autowired UserRepository userRepository;
+  private final UserRepository userRepository;
 
-  @Autowired RedisTemplate<String, String> redisTemplate;
+  private final RedisTemplate<String, String> redisTemplate;
 
   public LoginResultDto doLogin(HttpServletResponse response, LoginDto loginDto) throws Exception {
 

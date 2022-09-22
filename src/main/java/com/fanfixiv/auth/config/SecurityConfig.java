@@ -4,7 +4,6 @@ import com.fanfixiv.auth.filter.JwtAuthenticationFilter;
 import com.fanfixiv.auth.handler.CustomAuthenticationEntryPoint;
 import java.util.Arrays;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -22,7 +21,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableWebSecurity
 public class SecurityConfig {
 
-  @Autowired private JwtAuthenticationFilter jwtAuthenticationFilter;
+  private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
   @Bean
   public WebSecurityCustomizer configure() {

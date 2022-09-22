@@ -8,19 +8,21 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
 
+import lombok.RequiredArgsConstructor;
+
 @Component
+@RequiredArgsConstructor
 public class JwtAuthenticationFilter extends GenericFilterBean {
 
-  @Autowired private JwtTokenProvider jwtTokenProvider;
+  private final JwtTokenProvider jwtTokenProvider;
 
-  @Autowired private RedisTemplate<String, String> redisTemplate;
+  private final RedisTemplate<String, String> redisTemplate;
 
   @Override
   public void doFilter(ServletRequest request, ServletResponse res, FilterChain chain)
@@ -42,24 +44,11 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
         else if (jwtTokenProvider.validateToken(refresh)) {
           if (redisTemplate.opsForValue().get(refresh).equals(token)) {
             token = jwtTokenProvider.createTokenWithInVailedToken(token);
+            
             redisTemplate.opsForValue().set(refresh, token);
             redisTemplate.expireAt(refresh, new Date(new Date().getTime() + 60 * 60 * 1000));
-            response.setHeader("Authorization", token);
 
-            Authentication authentication = jwtTokenProvider.getAuthentication(token);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-          }
-        }
-        // JWT 토큰이 만료되지 않았으나 refershToken이 만료됨
-        else if (jwtTokenProvider.validateToken(token)) {
-          String value = redisTemplate.opsForValue().get(refresh);
-          if (value != null && value.equals(token)) {
-            redisTemplate.delete(refresh);
-            refresh = jwtTokenProvider.createRefreshToken();
-            redisTemplate.opsForValue().set(refresh, token);
-            redisTemplate.expireAt(refresh, new Date(new Date().getTime() + 60 * 60 * 1000));
-            response.setHeader(
-                "Set-Cookie", jwtTokenProvider.createRefreshTokenCookie(refresh).toString());
+            response.setHeader("Authorization", token);
 
             Authentication authentication = jwtTokenProvider.getAuthentication(token);
             SecurityContextHolder.getContext().setAuthentication(authentication);

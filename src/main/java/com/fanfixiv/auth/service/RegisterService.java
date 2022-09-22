@@ -17,20 +17,21 @@ import com.fanfixiv.auth.utils.TimeProvider;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class RegisterService {
-  @Autowired private ProfileRepository profileRepository;
+  private final ProfileRepository profileRepository;
 
-  @Autowired private UserRepository userRepository;
+  private final UserRepository userRepository;
 
-  @Autowired private RedisTemplate<String, String> redisTemplate;
+  private final RedisTemplate<String, String> redisTemplate;
 
-  @Autowired private MailService mailService;
+  private final MailService mailService;
 
   public RegisterResultDto register(RegisterDto dto) {
     if (userRepository.existsByEmail(dto.getEmail())) {
