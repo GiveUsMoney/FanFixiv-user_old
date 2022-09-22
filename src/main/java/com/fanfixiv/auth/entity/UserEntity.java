@@ -16,6 +16,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Getter
 @Builder
@@ -31,8 +32,6 @@ public class UserEntity extends BaseEntity {
 
   @Column private String pw;
 
-  @Column private String salt;
-
   @Enumerated(EnumType.STRING)
   @ColumnDefault(value = "'USER'")
   private UserRoleEnum role;
@@ -40,4 +39,24 @@ public class UserEntity extends BaseEntity {
   @OneToOne(cascade = CascadeType.PERSIST)
   @JoinColumn(name = "profile_seq")
   private ProfileEntity profile;
+
+  /**
+   * 비밀번호를 암호화
+   * @param passwordEncoder 암호화 할 인코더 클래스
+   * @return 변경된 유저 Entity
+   */
+  public UserEntity hashPassword(PasswordEncoder passwordEncoder) {
+    this.pw = passwordEncoder.encode(this.pw);
+    return this;
+  }
+
+  /**
+   * 비밀번호 확인
+   * @param plainPassword 암호화 이전의 비밀번호
+   * @param passwordEncoder 암호화에 사용된 클래스
+   * @return true | false
+   */
+  public boolean checkPassword(String plainPassword, PasswordEncoder passwordEncoder) {
+    return passwordEncoder.matches(plainPassword, this.pw);
+  }
 }
