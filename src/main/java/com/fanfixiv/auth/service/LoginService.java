@@ -5,12 +5,10 @@ import com.fanfixiv.auth.dto.login.LoginResultDto;
 import com.fanfixiv.auth.entity.UserEntity;
 import com.fanfixiv.auth.filter.JwtTokenProvider;
 import com.fanfixiv.auth.repository.UserRepository;
-
-import lombok.RequiredArgsConstructor;
-import java.util.Date;
+import com.fanfixiv.auth.utils.TimeProvider;
 import javax.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
-
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -25,7 +23,7 @@ public class LoginService {
   private final UserRepository userRepository;
 
   private final RedisTemplate<String, String> redisTemplate;
-  
+
   private final BCryptPasswordEncoder passwordEncoder;
 
   public LoginResultDto doLogin(HttpServletResponse response, LoginDto loginDto) throws Exception {
@@ -44,7 +42,8 @@ public class LoginService {
     String refresh = jwtTokenProvider.createRefreshToken();
 
     redisTemplate.opsForValue().set(refresh, token);
-    redisTemplate.expireAt(refresh, new Date(new Date().getTime() + 60 * 60 * 1000));
+    // 14일 후 만료
+    redisTemplate.expireAt(refresh, TimeProvider.getTimeAfter14day());
 
     response.setHeader("Set-Cookie", jwtTokenProvider.createRefreshTokenCookie(refresh).toString());
 

@@ -13,12 +13,12 @@ import com.fanfixiv.auth.repository.ProfileRepository;
 import com.fanfixiv.auth.repository.UserRepository;
 import com.fanfixiv.auth.utils.RandomProvider;
 import com.fanfixiv.auth.utils.TimeProvider;
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -71,7 +71,7 @@ public class RegisterService {
 
     String uuid = RandomProvider.getUUID();
     String number = RandomProvider.getRandomNumber();
-    LocalDateTime expireTime = TimeProvider.getTimeAfter3min();
+    Date expireTime = TimeProvider.getTimeAfter3min();
 
     List<String> sendTo =
         new ArrayList<String>() {
@@ -82,11 +82,10 @@ public class RegisterService {
 
     mailService.sendMail("회원가입 이메일", number, sendTo);
 
-    ValueOperations<String, String> vo = redisTemplate.opsForValue();
-    vo.set(uuid, number);
-    redisTemplate.expireAt(uuid, java.sql.Timestamp.valueOf(expireTime));
+    redisTemplate.opsForValue().set(uuid, number);
+    redisTemplate.expireAt(uuid, expireTime);
 
-    return new CertEmailResultDto(uuid, expireTime);
+    return new CertEmailResultDto(uuid, new Timestamp(expireTime.getTime()).toLocalDateTime());
   }
 
   public CertNumberResultDto certNumber(CertNumberDto dto) {
@@ -100,8 +99,7 @@ public class RegisterService {
 
     if (result) {
       this.redisTemplate.opsForValue().set(dto.getUuid(), "success");
-      this.redisTemplate.expireAt(
-          dto.getUuid(), java.sql.Timestamp.valueOf(TimeProvider.getTimeAfter1hour()));
+      this.redisTemplate.expireAt(dto.getUuid(), TimeProvider.getTimeAfter1hour());
     }
 
     return new CertNumberResultDto(result);

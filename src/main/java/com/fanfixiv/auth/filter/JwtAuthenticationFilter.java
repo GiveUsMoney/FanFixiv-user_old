@@ -1,20 +1,20 @@
 package com.fanfixiv.auth.filter;
 
 import java.io.IOException;
-import java.util.Date;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
 
-import lombok.RequiredArgsConstructor;
+import com.fanfixiv.auth.utils.TimeProvider;
 
 @Component
 @RequiredArgsConstructor
@@ -44,9 +44,11 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
         else if (jwtTokenProvider.validateToken(refresh)) {
           if (redisTemplate.opsForValue().get(refresh).equals(token)) {
             token = jwtTokenProvider.createTokenWithInVailedToken(token);
-            
+
             redisTemplate.opsForValue().set(refresh, token);
-            redisTemplate.expireAt(refresh, new Date(new Date().getTime() + 60 * 60 * 1000));
+
+            // 14일 후 만료
+            redisTemplate.expireAt(refresh, TimeProvider.getTimeAfter14day());
 
             response.setHeader("Authorization", token);
 
