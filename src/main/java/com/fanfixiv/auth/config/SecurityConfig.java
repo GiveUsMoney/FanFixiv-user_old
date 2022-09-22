@@ -2,7 +2,6 @@ package com.fanfixiv.auth.config;
 
 import com.fanfixiv.auth.filter.JwtAuthenticationFilter;
 import com.fanfixiv.auth.handler.CustomAuthenticationEntryPoint;
-import java.util.Arrays;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
@@ -39,10 +38,15 @@ public class SecurityConfig {
   }
 
   @Bean
+  public BCryptPasswordEncoder bCryptPasswordEncoder() {
+    return new BCryptPasswordEncoder();
+  }
+
+  @Bean
   public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration configuration = new CorsConfiguration();
 
-    configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000/"));
+    configuration.addAllowedOrigin("*");
     configuration.addAllowedHeader("*");
     configuration.addAllowedMethod("*");
     configuration.setAllowCredentials(true);
@@ -50,10 +54,6 @@ public class SecurityConfig {
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     source.registerCorsConfiguration("/**", configuration);
     return source;
- }
- 
-  public BCryptPasswordEncoder bCryptPasswordEncoder() {
-    return new BCryptPasswordEncoder();
   }
 
   @Bean

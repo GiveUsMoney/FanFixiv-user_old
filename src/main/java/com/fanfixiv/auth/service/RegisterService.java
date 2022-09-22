@@ -33,7 +33,7 @@ public class RegisterService {
 
   private final MailService mailService;
 
-  @Autowired private BCryptPasswordEncoder passwordEncoder;
+  private final BCryptPasswordEncoder passwordEncoder;
 
   public RegisterResultDto register(RegisterDto dto) {
     if (userRepository.existsByEmail(dto.getEmail())) {
