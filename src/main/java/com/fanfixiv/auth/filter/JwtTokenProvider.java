@@ -110,6 +110,7 @@ public class JwtTokenProvider {
 
   public String resolveRefreshToken(ServletRequest request) {
     Cookie[] cookies = ((HttpServletRequest) request).getCookies();
+    if (cookies == null) return null;
     for (Cookie cookie : cookies) {
       if (cookie.getName().equals("refreshToken")) return cookie.getValue();
     }
