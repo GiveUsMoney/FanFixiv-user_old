@@ -1,5 +1,6 @@
 package com.fanfixiv.auth.filter;
 
+import com.fanfixiv.auth.utils.JwtTokenProvider;
 import java.io.IOException;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -8,13 +9,10 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
-
-import com.fanfixiv.auth.utils.TimeProvider;
 
 @Component
 @RequiredArgsConstructor
@@ -22,40 +20,18 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 
   private final JwtTokenProvider jwtTokenProvider;
 
-  private final RedisTemplate<String, String> redisTemplate;
-
   @Override
-  public void doFilter(ServletRequest request, ServletResponse res, FilterChain chain)
+  public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
       throws IOException, ServletException {
-
-    String token = jwtTokenProvider.resolveToken(request);
-    String refresh = jwtTokenProvider.resolveRefreshToken(request);
+    String token = jwtTokenProvider.resolveToken(req);
 
     HttpServletResponse response = (HttpServletResponse) res;
+    HttpServletRequest request = (HttpServletRequest) req;
 
-    if (!"OPTIONS".equals(((HttpServletRequest) request).getMethod())) {
-      if (token != null && refresh != null) {
-        // JWT 토큰과 Refresh 토큰이 만료되지 않음.
-        if (jwtTokenProvider.validateToken(refresh) && jwtTokenProvider.validateToken(token)) {
-          Authentication authentication = jwtTokenProvider.getAuthentication(token);
-          SecurityContextHolder.getContext().setAuthentication(authentication);
-        }
-        // JWT 토큰이 만료되었으나 refershToken이 만료되지 않음
-        else if (jwtTokenProvider.validateToken(refresh)) {
-          if (redisTemplate.opsForValue().get(refresh).equals(token)) {
-            token = jwtTokenProvider.createTokenWithInVailedToken(token);
-
-            redisTemplate.opsForValue().set(refresh, token);
-
-            // 14일 후 만료
-            redisTemplate.expireAt(refresh, TimeProvider.getTimeAfter14day());
-
-            response.setHeader("Authorization", token);
-
-            Authentication authentication = jwtTokenProvider.getAuthentication(token);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-          }
-        }
+    if (!"OPTIONS".equals(request.getMethod())) {
+      if (token != null && jwtTokenProvider.validateToken(token)) {
+        Authentication authentication = jwtTokenProvider.getAuthentication(token);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
       }
     }
 

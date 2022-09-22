@@ -3,8 +3,8 @@ package com.fanfixiv.auth.service;
 import com.fanfixiv.auth.dto.login.LoginDto;
 import com.fanfixiv.auth.dto.login.LoginResultDto;
 import com.fanfixiv.auth.entity.UserEntity;
-import com.fanfixiv.auth.filter.JwtTokenProvider;
 import com.fanfixiv.auth.repository.UserRepository;
+import com.fanfixiv.auth.utils.JwtTokenProvider;
 import com.fanfixiv.auth.utils.TimeProvider;
 import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -48,5 +48,19 @@ public class LoginService {
     response.setHeader("Set-Cookie", jwtTokenProvider.createRefreshTokenCookie(refresh).toString());
 
     return new LoginResultDto(token);
+  }
+
+  public LoginResultDto refershToken(String refresh, String token) {
+    String _token = redisTemplate.opsForValue().get(refresh);
+
+    if (token != null && token.equals(_token)) {
+      token = jwtTokenProvider.createTokenWithInVailedToken(token);
+      redisTemplate.opsForValue().set(refresh, token);
+      // 14일 후 만료
+      redisTemplate.expireAt(refresh, TimeProvider.getTimeAfter14day());
+
+      return new LoginResultDto(token);
+    }
+    throw new BadCredentialsException("토큰값이 올바르지 않습니다.");
   }
 }

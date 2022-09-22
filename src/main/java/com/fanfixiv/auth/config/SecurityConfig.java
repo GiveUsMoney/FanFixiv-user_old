@@ -61,7 +61,6 @@ public class SecurityConfig {
 
     http.httpBasic().disable(); // Http Basic을 이용한 보안 해제
     http.formLogin().disable(); // 기본 Login Form 해제
-    // http.cors().disable(); // CORS 보안 해제
     http.csrf().disable(); // CSRF 보안 해제
     http.sessionManagement()
         .sessionCreationPolicy(
@@ -70,13 +69,11 @@ public class SecurityConfig {
     http.authorizeRequests()
         .antMatchers(HttpMethod.OPTIONS, "/**")
         .permitAll()
-        .antMatchers("/login", "/register/**", "/", "/redis")
+        .antMatchers("/login", "/register/**", "/", "/refresh")
         .permitAll() // 로그인 회원가입은 보안 해제
         .anyRequest()
-        .authenticated()
-        .and()
-        .exceptionHandling()
-        .authenticationEntryPoint(authenticationEntryPoint());
+        .authenticated();
+    http.exceptionHandling().authenticationEntryPoint(authenticationEntryPoint());
 
     http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 

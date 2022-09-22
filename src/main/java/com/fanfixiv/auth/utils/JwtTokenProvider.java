@@ -1,4 +1,4 @@
-package com.fanfixiv.auth.filter;
+package com.fanfixiv.auth.utils;
 
 import com.fanfixiv.auth.interfaces.UserRoleEnum;
 import io.jsonwebtoken.Claims;
@@ -19,6 +19,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
@@ -58,7 +59,8 @@ public class JwtTokenProvider {
     Long pk = -1L;
     UserRoleEnum role = UserRoleEnum.USER;
     try {
-      this.getUserPk(token);
+      pk = Long.parseLong(this.getUserPk(token));
+      role = UserRoleEnum.valueOf(this.getRoles(token));
     } catch (ExpiredJwtException e) {
       pk = Long.valueOf(e.getClaims().getSubject());
       role = UserRoleEnum.valueOf(e.getClaims().get("roles", String.class));
@@ -91,8 +93,12 @@ public class JwtTokenProvider {
   }
 
   public Authentication getAuthentication(String token) {
-    UserDetails userDetails = userDetailsService.loadUserByUsername(this.getUserPk(token));
-    return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+    try {
+      UserDetails userDetails = userDetailsService.loadUserByUsername(this.getUserPk(token));
+      return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+    } catch (UsernameNotFoundException e) {
+      return null;
+    }
   }
 
   public String getUserPk(String token) {
