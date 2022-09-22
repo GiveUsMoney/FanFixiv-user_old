@@ -5,16 +5,15 @@ import com.fanfixiv.auth.dto.login.LoginResultDto;
 import com.fanfixiv.auth.entity.UserEntity;
 import com.fanfixiv.auth.filter.JwtTokenProvider;
 import com.fanfixiv.auth.repository.UserRepository;
-import com.fanfixiv.auth.utils.HashProvider;
 
 import lombok.RequiredArgsConstructor;
-
 import java.util.Date;
-
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.data.redis.core.RedisTemplate;
+
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -26,6 +25,8 @@ public class LoginService {
   private final UserRepository userRepository;
 
   private final RedisTemplate<String, String> redisTemplate;
+  
+  private final BCryptPasswordEncoder passwordEncoder;
 
   public LoginResultDto doLogin(HttpServletResponse response, LoginDto loginDto) throws Exception {
 
@@ -35,11 +36,7 @@ public class LoginService {
 
     UserEntity user = userRepository.findByEmail(loginDto.getId());
 
-    String salt = user.getSalt();
-
-    String pw = HashProvider.hashString(loginDto.getPw(), salt);
-
-    if (!user.getPw().equals(pw)) {
+    if (!user.checkPassword(loginDto.getPw(), passwordEncoder)) {
       throw new BadCredentialsException("비밀번호가 불일치 합니다.");
     }
 

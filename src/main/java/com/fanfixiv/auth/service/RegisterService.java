@@ -11,7 +11,6 @@ import com.fanfixiv.auth.entity.UserEntity;
 import com.fanfixiv.auth.exception.DuplicateException;
 import com.fanfixiv.auth.repository.ProfileRepository;
 import com.fanfixiv.auth.repository.UserRepository;
-import com.fanfixiv.auth.utils.HashProvider;
 import com.fanfixiv.auth.utils.RandomProvider;
 import com.fanfixiv.auth.utils.TimeProvider;
 import java.time.LocalDateTime;
@@ -20,6 +19,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -33,6 +33,8 @@ public class RegisterService {
 
   private final MailService mailService;
 
+  @Autowired private BCryptPasswordEncoder passwordEncoder;
+
   public RegisterResultDto register(RegisterDto dto) {
     if (userRepository.existsByEmail(dto.getEmail())) {
       throw new DuplicateException("이미 사용중인 이메일입니다.");
@@ -45,18 +47,13 @@ public class RegisterService {
       throw new DuplicateException("본인인증이 되어있지 않습니다.");
     }
 
-    String salt = HashProvider.getSalt();
-
     ProfileEntity profile =
         ProfileEntity.builder().nickname(dto.getNickname()).is_tr(false).build();
 
     UserEntity user =
-        UserEntity.builder()
-            .email(dto.getEmail())
-            .pw(HashProvider.hashString(dto.getPw(), salt))
-            .salt(salt)
-            .profile(profile)
-            .build();
+        UserEntity.builder().email(dto.getEmail()).pw(dto.getPw()).profile(profile).build();
+
+    user.hashPassword(passwordEncoder);
 
     userRepository.save(user);
 
