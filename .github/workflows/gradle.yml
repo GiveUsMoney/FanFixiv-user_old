@@ -17,16 +17,6 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-latest
-    env:
-      AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
-      AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
-      SECRET: ${{ secrets.SECRET }}
-      DB_HOST: ${{ secrets.DB_HOST }}
-      DB_PORT: ${{ secrets.DB_PORT }}
-      DB_USER: ${{ secrets.DB_USER }}
-      DB_NAME: ${{ secrets.DB_NAME }}
-      DB_PW: ${{ secrets.DB_PW }}
-
     steps:
       - uses: actions/checkout@v3
       - name: Set up JDK 17
@@ -47,3 +37,7 @@ jobs:
           arguments: |
             test
             -i
+        env:
+          AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+          AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
+          SECRET: ${{ secrets.SECRET }}
