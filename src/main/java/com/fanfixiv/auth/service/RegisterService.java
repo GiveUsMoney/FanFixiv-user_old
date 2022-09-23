@@ -67,7 +67,7 @@ public class RegisterService {
   }
 
   public DoubleCheckDto checkNickDouble(String nickname) {
-    return new DoubleCheckDto(profileRepository.existsByNickname(nickname));
+    return new DoubleCheckDto(!profileRepository.existsByNickname(nickname));
   }
 
   public CertEmailResultDto certEmail(String email) {
