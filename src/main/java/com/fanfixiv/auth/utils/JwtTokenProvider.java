@@ -13,6 +13,8 @@ import javax.servlet.ServletRequest;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -22,8 +24,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
-@RequiredArgsConstructor
+@Slf4j
 @Component
+@RequiredArgsConstructor
 public class JwtTokenProvider {
 
   @Value("${jwt.secret}")
@@ -92,8 +95,9 @@ public class JwtTokenProvider {
     return cookie;
   }
 
-  public Authentication getAuthentication(String token) {
+  public Authentication getAuthentication(String jwtToken) {
     try {
+      String token = this.bearerRemove(jwtToken);
       UserDetails userDetails = userDetailsService.loadUserByUsername(this.getUserPk(token));
       return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     } catch (UsernameNotFoundException e) {
@@ -125,10 +129,16 @@ public class JwtTokenProvider {
 
   public boolean validateToken(String jwtToken) {
     try {
-      Jws<Claims> claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(jwtToken);
+      String token = bearerRemove(jwtToken);
+      log.info(token);
+      Jws<Claims> claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
       return !claims.getBody().getExpiration().before(new Date());
     } catch (Exception e) {
       return false;
     }
+  }
+
+  private String bearerRemove(String token) {
+    return token.replace("Bearer ", "");
   }
 }
