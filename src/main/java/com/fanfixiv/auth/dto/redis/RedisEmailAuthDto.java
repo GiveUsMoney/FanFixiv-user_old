@@ -8,13 +8,12 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-import javax.persistence.Id;
-
+import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 
 @Getter
 @Setter
-@RedisHash(value = "email", timeToLive= 60 * 60)
+@RedisHash(value = "email", timeToLive = 60 * 60)
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
