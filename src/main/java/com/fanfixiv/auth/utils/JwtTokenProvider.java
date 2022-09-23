@@ -13,7 +13,6 @@ import javax.servlet.ServletRequest;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
@@ -24,7 +23,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
-@Slf4j
 @Component
 @RequiredArgsConstructor
 public class JwtTokenProvider {
@@ -130,7 +128,6 @@ public class JwtTokenProvider {
   public boolean validateToken(String jwtToken) {
     try {
       String token = bearerRemove(jwtToken);
-      log.info(token);
       Jws<Claims> claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
       return !claims.getBody().getExpiration().before(new Date());
     } catch (Exception e) {
