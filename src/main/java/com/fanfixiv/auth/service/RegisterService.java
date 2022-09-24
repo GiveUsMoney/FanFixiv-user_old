@@ -19,7 +19,6 @@ import com.fanfixiv.auth.utils.TimeProvider;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import lombok.RequiredArgsConstructor;
@@ -82,7 +81,7 @@ public class RegisterService {
 
     String uuid = RandomProvider.getUUID();
     String number = RandomProvider.getRandomNumber();
-    Date expireTime = TimeProvider.getTimeAfter3min();
+    LocalDateTime expireTime = new Timestamp(TimeProvider.getTimeAfter3min().getTime()).toLocalDateTime();
 
     List<String> sendTo =
         new ArrayList<String>() {
@@ -102,7 +101,7 @@ public class RegisterService {
 
     redisEmailRepository.save(rDto);
 
-    return new CertEmailResultDto(uuid, new Timestamp(expireTime.getTime()).toLocalDateTime());
+    return new CertEmailResultDto(uuid, expireTime);
   }
 
   public CertNumberResultDto certNumber(CertNumberDto dto) {
@@ -118,13 +117,6 @@ public class RegisterService {
         redisEmailRepository.save(redisDto);
         return new CertNumberResultDto(true);
       }
-    }
-
-    boolean result = number.equals(dto.getNumber());
-
-    if (result) {
-      this.redisTemplate.opsForValue().set(dto.getUuid(), "success");
-      this.redisTemplate.expireAt(dto.getUuid(), TimeProvider.getTimeAfter1hour());
     }
 
     return new CertNumberResultDto(false);
