@@ -2,21 +2,21 @@ package com.fanfixiv.auth.service;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
 import com.amazonaws.services.simpleemail.model.SendEmailResult;
 import com.fanfixiv.auth.dto.email.EmailDto;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class MailService {
 
-  @Autowired
-  AmazonSimpleEmailService amazonSimpleEmailService;
+  private final AmazonSimpleEmailService amazonSimpleEmailService;
 
   public void sendMail(final String subject, final String content, final List<String> receivers) {
     final EmailDto senderDto = EmailDto.builder() // 1

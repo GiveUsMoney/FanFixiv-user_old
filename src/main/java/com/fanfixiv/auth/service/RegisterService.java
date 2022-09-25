@@ -16,26 +16,30 @@ import com.fanfixiv.auth.repository.UserRepository;
 import com.fanfixiv.auth.utils.RandomProvider;
 import com.fanfixiv.auth.utils.TimeProvider;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import lombok.RequiredArgsConstructor;
+
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class RegisterService {
-  @Autowired private ProfileRepository profileRepository;
+  private final ProfileRepository profileRepository;
 
-  @Autowired private UserRepository userRepository;
+  private final UserRepository userRepository;
 
-  @Autowired private RedisEmailRepository redisEmailRepository;
+  private final RedisEmailRepository redisEmailRepository;
 
-  @Autowired private MailService mailService;
+  private final MailService mailService;
 
-  @Autowired private BCryptPasswordEncoder passwordEncoder;
+  private final BCryptPasswordEncoder passwordEncoder;
 
   public RegisterResultDto register(RegisterDto dto) {
     if (profileRepository.existsByNickname(dto.getNickname())) {
@@ -77,7 +81,7 @@ public class RegisterService {
 
     String uuid = RandomProvider.getUUID();
     String number = RandomProvider.getRandomNumber();
-    LocalDateTime expireTime = TimeProvider.getTimeAfter3min();
+    LocalDateTime expireTime = new Timestamp(TimeProvider.getTimeAfter3min().getTime()).toLocalDateTime();
 
     List<String> sendTo =
         new ArrayList<String>() {
@@ -114,7 +118,6 @@ public class RegisterService {
         return new CertNumberResultDto(true);
       }
     }
-
 
     return new CertNumberResultDto(false);
   }

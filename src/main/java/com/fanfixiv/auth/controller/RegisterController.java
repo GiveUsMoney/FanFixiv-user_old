@@ -9,7 +9,7 @@ import com.fanfixiv.auth.dto.register.RegisterDto;
 import com.fanfixiv.auth.dto.register.RegisterResultDto;
 import com.fanfixiv.auth.service.RegisterService;
 import javax.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,9 +23,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @Validated
 @RequestMapping("/register")
+@RequiredArgsConstructor
 public class RegisterController {
 
-  @Autowired private RegisterService registerService;
+  private final RegisterService registerService;
 
   @PostMapping("")
   @ResponseStatus(code = HttpStatus.CREATED)
