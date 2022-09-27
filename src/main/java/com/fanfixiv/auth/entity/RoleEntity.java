@@ -29,6 +29,6 @@ public class RoleEntity extends BaseEntity {
   private Long user_seq;
 
   @Enumerated(EnumType.STRING)
-  @ColumnDefault(value = "'USER'")
+  @ColumnDefault(value = "'ROLE_USER'")
   private UserRoleEnum role;
 }

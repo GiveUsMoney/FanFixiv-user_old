@@ -2,17 +2,19 @@ package com.fanfixiv.auth.service;
 
 import com.fanfixiv.auth.dto.login.LoginDto;
 import com.fanfixiv.auth.dto.login.LoginResultDto;
+import com.fanfixiv.auth.dto.redis.RedisAuthDto;
 import com.fanfixiv.auth.entity.UserEntity;
 import com.fanfixiv.auth.interfaces.UserRoleEnum;
+import com.fanfixiv.auth.repository.RedisAuthRepository;
 import com.fanfixiv.auth.repository.UserRepository;
 import com.fanfixiv.auth.utils.JwtTokenProvider;
-import com.fanfixiv.auth.utils.TimeProvider;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.RedisTemplate;
+
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -26,7 +28,7 @@ public class LoginService {
 
   private final UserRepository userRepository;
 
-  private final RedisTemplate<String, String> redisTemplate;
+  private final RedisAuthRepository redisAuthRepository;
 
   private final BCryptPasswordEncoder passwordEncoder;
 
@@ -47,26 +49,25 @@ public class LoginService {
     String token = jwtTokenProvider.createToken(user.getSeq(), roles);
     String refresh = jwtTokenProvider.createRefreshToken();
 
-    redisTemplate.opsForValue().set(refresh, token);
-    // 14일 후 만료
-    redisTemplate.expireAt(refresh, TimeProvider.getTimeAfter14day());
-
+    redisAuthRepository.save(RedisAuthDto.builder().refreshToken(refresh).jwtToken(token).build());
+    
     response.setHeader("Set-Cookie", jwtTokenProvider.createRefreshTokenCookie(refresh).toString());
 
     return new LoginResultDto(token);
   }
 
   public LoginResultDto refershToken(String refresh, String token) {
-    String _token = redisTemplate.opsForValue().get(refresh);
+    Optional<RedisAuthDto> _authDto = redisAuthRepository.findById(refresh);
+    token = jwtTokenProvider.bearerRemove(token);
 
-    if (token != null && token.equals(_token)) {
+    RedisAuthDto authDto = _authDto.orElseThrow(() -> new BadCredentialsException("토큰값이 올바르지 않습니다."));
+
+    if (authDto.getJwtToken().equals(token)) {
       token = jwtTokenProvider.createTokenWithInVailedToken(token);
-      redisTemplate.opsForValue().set(refresh, token);
-      // 14일 후 만료
-      redisTemplate.expireAt(refresh, TimeProvider.getTimeAfter14day());
-
+      redisAuthRepository.save(RedisAuthDto.builder().refreshToken(refresh).jwtToken(token).build());
       return new LoginResultDto(token);
     }
+
     throw new BadCredentialsException("토큰값이 올바르지 않습니다.");
   }
 }

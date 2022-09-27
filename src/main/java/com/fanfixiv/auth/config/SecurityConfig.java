@@ -63,16 +63,28 @@ public class SecurityConfig {
     http.formLogin().disable(); // 기본 Login Form 해제
     http.csrf().disable(); // CSRF 보안 해제
     http.sessionManagement()
-        .sessionCreationPolicy(
-            SessionCreationPolicy
-                .STATELESS); // jwt token으로 인증하므로 stateless(인증정보를 서버에 남기지 않음) 하도록 처리.
+        .sessionCreationPolicy(SessionCreationPolicy.STATELESS); // jwt token으로 인증하므로 stateless(인증정보를 서버에 남기지 않음) 하도록 처리.
+  
     http.authorizeRequests()
         .antMatchers(HttpMethod.OPTIONS, "/**")
         .permitAll()
         .antMatchers("/login", "/register/**", "/", "/refresh")
-        .permitAll() // 로그인 회원가입은 보안 해제
+        .permitAll(); // 로그인 회원가입은 보안 해제
+    
+    http.authorizeRequests()
+        .antMatchers("/roles/user")
+        .hasRole("USER")
+        .antMatchers("/roles/artist")
+        .hasRole("ARTIST")
+        .antMatchers("/roles/trans")
+        .hasRole("TRANSLATER")
+        .antMatchers("/roles/admin")
+        .hasRole("ADMIN");
+        
+    http.authorizeRequests()
         .anyRequest()
         .authenticated();
+  
     http.exceptionHandling().authenticationEntryPoint(authenticationEntryPoint());
 
     http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
