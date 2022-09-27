@@ -1,5 +1,7 @@
 package com.fanfixiv.auth.dto.profile;
 
+import java.time.LocalDateTime;
+
 import com.fanfixiv.auth.entity.UserEntity;
 
 import lombok.AllArgsConstructor;
@@ -8,11 +10,20 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class ProfileResultDto {
-  // TODO: 후일 프로필 DB가 추가되면 더 많은 property를 포함할 예정
   private String email;
+  private String nickname;
+  private LocalDateTime nn_md_date;
+  private String profile_img;
+  private String descript;
+  private boolean is_tr;
 
   public ProfileResultDto(UserEntity user) {
     this.email = user.getEmail();
+    this.nickname = user.getProfile().getNickname();
+    this.nn_md_date = user.getProfile().getNn_md_date();
+    this.profile_img = user.getProfile().getProfile_img();
+    this.descript = user.getProfile().getDescript();
+    this.is_tr = user.getProfile().is_tr();
   }
 
 }

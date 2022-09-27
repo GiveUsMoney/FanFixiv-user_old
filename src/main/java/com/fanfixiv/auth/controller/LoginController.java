@@ -1,5 +1,6 @@
 package com.fanfixiv.auth.controller;
 
+import com.fanfixiv.auth.details.User;
 import com.fanfixiv.auth.dto.login.LoginDto;
 import com.fanfixiv.auth.dto.login.LoginResultDto;
 import com.fanfixiv.auth.dto.profile.ProfileResultDto;
@@ -8,7 +9,7 @@ import java.security.Principal;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,8 +39,8 @@ public class LoginController {
   }
 
   @GetMapping("/profile")
-  public ProfileResultDto profile(Authentication authentication, Principal principal)
+  public ProfileResultDto profile(@AuthenticationPrincipal User user, Principal principal)
       throws Exception {
-    return new ProfileResultDto(principal.getName());
+    return new ProfileResultDto(user.getUser());
   }
 }
