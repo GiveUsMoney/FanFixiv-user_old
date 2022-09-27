@@ -2,12 +2,15 @@ package com.fanfixiv.auth.utils;
 
 import com.fanfixiv.auth.interfaces.UserRoleEnum;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
+import java.util.List;
+
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.Cookie;
@@ -43,7 +46,7 @@ public class JwtTokenProvider {
     secret = Base64.getEncoder().encodeToString(secret.getBytes());
   }
 
-  public String createToken(Long userPk, UserRoleEnum roles) {
+  public String createToken(Long userPk, List<UserRoleEnum> roles) {
     Claims claims = Jwts.claims().setSubject(userPk.toString());
     claims.put("roles", roles);
     Date now = new Date();
@@ -57,17 +60,10 @@ public class JwtTokenProvider {
   }
 
   public String createTokenWithInVailedToken(String token) {
-    Long pk = -1L;
-    UserRoleEnum role = UserRoleEnum.USER;
-    try {
-      pk = Long.parseLong(this.getUserPk(token));
-      role = UserRoleEnum.valueOf(this.getRoles(token));
-    } catch (ExpiredJwtException e) {
-      pk = Long.valueOf(e.getClaims().getSubject());
-      role = UserRoleEnum.valueOf(e.getClaims().get("roles", String.class));
-    }
-
-    return createToken(pk, role);
+    //TODO: 코드 작성 필요
+    Long pk = 1L;
+    List<UserRoleEnum> roles = new ArrayList<UserRoleEnum>();
+    return createToken(pk, roles);
   }
 
   public String createRefreshToken() {

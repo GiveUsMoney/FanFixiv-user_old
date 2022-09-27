@@ -3,9 +3,13 @@ package com.fanfixiv.auth.service;
 import com.fanfixiv.auth.dto.login.LoginDto;
 import com.fanfixiv.auth.dto.login.LoginResultDto;
 import com.fanfixiv.auth.entity.UserEntity;
+import com.fanfixiv.auth.interfaces.UserRoleEnum;
 import com.fanfixiv.auth.repository.UserRepository;
 import com.fanfixiv.auth.utils.JwtTokenProvider;
 import com.fanfixiv.auth.utils.TimeProvider;
+
+import java.util.List;
+
 import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -38,7 +42,9 @@ public class LoginService {
       throw new BadCredentialsException("비밀번호가 불일치 합니다.");
     }
 
-    String token = jwtTokenProvider.createToken(user.getSeq(), user.getRole());
+    List<UserRoleEnum> roles = user.getRole().stream().map(item -> item.getRole()).toList();
+
+    String token = jwtTokenProvider.createToken(user.getSeq(), roles);
     String refresh = jwtTokenProvider.createRefreshToken();
 
     redisTemplate.opsForValue().set(refresh, token);
