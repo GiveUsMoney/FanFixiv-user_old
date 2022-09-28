@@ -81,14 +81,13 @@ public class JwtTokenProvider {
   }
 
   public ResponseCookie createRefreshTokenCookie(String refresh) {
-    ResponseCookie cookie =
-        ResponseCookie.from("refreshToken", refresh)
-            .maxAge(7 * 24 * 60 * 60)
-            .path("/")
-            .secure(true)
-            .sameSite("None")
-            .httpOnly(true)
-            .build();
+    ResponseCookie cookie = ResponseCookie.from("refreshToken", refresh)
+        .maxAge(7 * 24 * 60 * 60)
+        .path("/")
+        .secure(true)
+        .sameSite("None")
+        .httpOnly(true)
+        .build();
 
     return cookie;
   }
@@ -108,8 +107,7 @@ public class JwtTokenProvider {
   }
 
   public String getRoles(String token) {
-    return (String)
-        Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody().get("roles");
+    return (String) Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody().get("roles");
   }
 
   public String resolveToken(ServletRequest request) {
@@ -118,9 +116,11 @@ public class JwtTokenProvider {
 
   public String resolveRefreshToken(ServletRequest request) {
     Cookie[] cookies = ((HttpServletRequest) request).getCookies();
-    if (cookies == null) return null;
+    if (cookies == null)
+      return null;
     for (Cookie cookie : cookies) {
-      if (cookie.getName().equals("refreshToken")) return cookie.getValue();
+      if (cookie.getName().equals("refreshToken"))
+        return cookie.getValue();
     }
     return null;
   }

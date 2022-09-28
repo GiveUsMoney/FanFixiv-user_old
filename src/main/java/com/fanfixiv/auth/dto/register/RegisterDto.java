@@ -10,10 +10,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RegisterDto {
-  @NotEmpty private String pw;
+  @NotEmpty
+  private String pw;
 
-  @NotEmpty private String nickname;
+  @NotEmpty
+  private String nickname;
 
-  @NotEmpty private String uuid;
+  @NotEmpty
+  private String birth;
+
+  @NotEmpty
+  private String uuid;
 }
-

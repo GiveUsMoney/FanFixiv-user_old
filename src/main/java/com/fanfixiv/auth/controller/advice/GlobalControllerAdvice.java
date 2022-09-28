@@ -16,37 +16,35 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-@ControllerAdvice(basePackageClasses = {LoginController.class, RegisterController.class})
+@ControllerAdvice(basePackageClasses = { LoginController.class, RegisterController.class })
 public class GlobalControllerAdvice {
-  @ExceptionHandler({UsernameNotFoundException.class, BadCredentialsException.class})
+  @ExceptionHandler({ UsernameNotFoundException.class, BadCredentialsException.class })
   public ResponseEntity<ErrorResponse> handleLoginException(Exception e) {
     ErrorResponse err = new ErrorResponse(HttpStatus.UNAUTHORIZED, e.getMessage());
     return new ResponseEntity<ErrorResponse>(err, HttpStatus.UNAUTHORIZED);
   }
 
-  @ExceptionHandler({MissingServletRequestParameterException.class, DuplicateException.class})
+  @ExceptionHandler({ MissingServletRequestParameterException.class, DuplicateException.class })
   public ResponseEntity<ErrorResponse> handleMissingServletRequestParameterException(Exception e) {
     ErrorResponse err = new ErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
     return new ResponseEntity<ErrorResponse>(err, HttpStatus.BAD_REQUEST);
   }
 
-  @ExceptionHandler({MethodArgumentNotValidException.class})
+  @ExceptionHandler({ MethodArgumentNotValidException.class })
   public ResponseEntity<ErrorResponse> handleValidationExceptions(
       MethodArgumentNotValidException e) {
-    List<String> errLst =
-        e.getBindingResult().getAllErrors().stream()
-            .map((error) -> ((FieldError) error).getField() + "이(가) " + error.getDefaultMessage())
-            .toList();
+    List<String> errLst = e.getBindingResult().getAllErrors().stream()
+        .map((error) -> ((FieldError) error).getField() + "이(가) " + error.getDefaultMessage())
+        .toList();
     ErrorResponse err = new ErrorResponse(HttpStatus.BAD_REQUEST, "입력된 값이 올바르지 않습니다.", errLst);
     return new ResponseEntity<ErrorResponse>(err, HttpStatus.BAD_REQUEST);
   }
 
-  @ExceptionHandler({BindException.class})
+  @ExceptionHandler({ BindException.class })
   public ResponseEntity<ErrorResponse> handleValidationExceptions(BindException e) {
-    List<String> errLst =
-        e.getBindingResult().getAllErrors().stream()
-            .map((error) -> ((FieldError) error).getField() + "이(가) " + error.getDefaultMessage())
-            .toList();
+    List<String> errLst = e.getBindingResult().getAllErrors().stream()
+        .map((error) -> ((FieldError) error).getField() + "이(가) " + error.getDefaultMessage())
+        .toList();
     ErrorResponse err = new ErrorResponse(HttpStatus.BAD_REQUEST, "입력된 값이 올바르지 않습니다.", errLst);
     return new ResponseEntity<ErrorResponse>(err, HttpStatus.BAD_REQUEST);
   }
