@@ -1,5 +1,6 @@
 package com.fanfixiv.auth.entity;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -21,15 +22,21 @@ import org.hibernate.annotations.DynamicUpdate;
 @AllArgsConstructor
 @Table(name = "tb_profile")
 public class ProfileEntity extends BaseEntity {
-  @Column private String nickname;
+  @Column
+  private String nickname;
 
   @Column
   @ColumnDefault("now()")
   private LocalDateTime nn_md_date;
 
-  @Column private String profile_img;
+  @Column
+  private LocalDate birth;
 
-  @Column private String descript;
+  @Column
+  private String profile_img;
+
+  @Column
+  private String descript;
 
   @Column
   @ColumnDefault("false")

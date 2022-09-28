@@ -16,7 +16,9 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EntityListeners(AuditingEntityListener.class)
 public class BaseEntity {
 
-  @Id @GeneratedValue protected long seq;
+  @Id
+  @GeneratedValue
+  protected long seq;
 
   @CreatedDate
   @Column(updatable = false, nullable = false)

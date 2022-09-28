@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Profile({"!prod"})
 @RestController
 @RequiredArgsConstructor
-@Api(tags = {"임시 API (후일 테스트와 함께 삭제해주세요)"})
+@Api(tags = { "임시 API (후일 테스트와 함께 삭제해주세요)" })
 public class TempController {
 
   private static int ID = 0;

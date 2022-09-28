@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.transaction.Transactional;
+
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.security.authentication.BadCredentialsException;
@@ -32,6 +34,7 @@ public class LoginService {
 
   private final BCryptPasswordEncoder passwordEncoder;
 
+  @Transactional
   public LoginResultDto doLogin(HttpServletResponse response, LoginDto loginDto) throws Exception {
 
     if (!userRepository.existsByEmail(loginDto.getId())) {
@@ -56,6 +59,7 @@ public class LoginService {
     return new LoginResultDto(token);
   }
 
+  @Transactional
   public LoginResultDto refershToken(String refresh, String token) {
     Optional<RedisAuthDto> _authDto = redisAuthRepository.findById(refresh);
     token = jwtTokenProvider.bearerRemove(token);
