@@ -30,7 +30,7 @@ public class MailService {
 
     sendingResultMustSuccess(sendEmailResult); // 3
   }
-    
+
   private void sendingResultMustSuccess(final SendEmailResult sendEmailResult) {
     if (sendEmailResult.getSdkHttpMetadata().getHttpStatusCode() != 200) {
       log.error("{}", sendEmailResult.getSdkResponseMetadata().toString());

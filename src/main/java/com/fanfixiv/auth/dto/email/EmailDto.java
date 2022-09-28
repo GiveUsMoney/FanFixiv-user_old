@@ -28,10 +28,9 @@ public class EmailDto {
   public SendEmailRequest toSendRequestDto() {
     final Destination destination = new Destination().withToAddresses(this.to);
 
-    final Message message =
-        new Message()
-            .withSubject(createContent(this.subject))
-            .withBody(new Body().withHtml(createContent(this.content)));
+    final Message message = new Message()
+        .withSubject(createContent(this.subject))
+        .withBody(new Body().withHtml(createContent(this.content)));
 
     return new SendEmailRequest()
         .withSource(FROM_EMAIL)

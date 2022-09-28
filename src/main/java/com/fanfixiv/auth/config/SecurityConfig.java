@@ -26,10 +26,9 @@ public class SecurityConfig {
   @Bean
   public WebSecurityCustomizer configure() {
     // 해당 path들은 Security의 적용을 받지않음. -> 애초에 실제 배포 단계에서 있으면 안됨.
-    return (web) ->
-        web.ignoring()
-            .mvcMatchers(
-                "/swagger-ui.html/**", "/webjars/**", "/swagger-resources/**", "/v2/api-docs");
+    return (web) -> web.ignoring()
+        .mvcMatchers(
+            "/swagger-ui.html/**", "/webjars/**", "/swagger-resources/**", "/v2/api-docs");
   }
 
   @Bean
@@ -64,8 +63,7 @@ public class SecurityConfig {
     http.csrf().disable(); // CSRF 보안 해제
     http.sessionManagement()
         .sessionCreationPolicy(
-            SessionCreationPolicy
-                .STATELESS); // jwt token으로 인증하므로 stateless(인증정보를 서버에 남기지 않음) 하도록 처리.
+            SessionCreationPolicy.STATELESS); // jwt token으로 인증하므로 stateless(인증정보를 서버에 남기지 않음) 하도록 처리.
     http.authorizeRequests()
         .antMatchers(HttpMethod.OPTIONS, "/**")
         .permitAll()

@@ -16,7 +16,7 @@ import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @Configuration
-@Profile({"!prod & !test"})
+@Profile({ "!prod & !test" })
 @EnableSwagger2
 @RequiredArgsConstructor
 public class SwaggerConfig {
@@ -29,13 +29,12 @@ public class SwaggerConfig {
 
   @Bean
   public Docket restAPI() {
-    Docket docket =
-        new Docket(DocumentationType.SWAGGER_2)
-            .apiInfo(apiInfo())
-            .select()
-            .apis(RequestHandlerSelectors.basePackage("com.fanfixiv.auth"))
-            .paths(PathSelectors.any())
-            .build();
+    Docket docket = new Docket(DocumentationType.SWAGGER_2)
+        .apiInfo(apiInfo())
+        .select()
+        .apis(RequestHandlerSelectors.basePackage("com.fanfixiv.auth"))
+        .paths(PathSelectors.any())
+        .build();
     if (Arrays.asList(env.getActiveProfiles()).contains("dev")) {
       docket.pathMapping("/auth");
     }

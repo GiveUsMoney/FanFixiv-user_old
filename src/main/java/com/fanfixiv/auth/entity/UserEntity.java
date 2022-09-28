@@ -28,9 +28,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Table(name = "tb_user")
 public class UserEntity extends BaseEntity {
 
-  @Column private String email;
+  @Column
+  private String email;
 
-  @Column private String pw;
+  @Column
+  private String pw;
 
   @Enumerated(EnumType.STRING)
   @ColumnDefault(value = "'USER'")
@@ -42,6 +44,7 @@ public class UserEntity extends BaseEntity {
 
   /**
    * 비밀번호를 암호화
+   * 
    * @param passwordEncoder 암호화 할 인코더 클래스
    * @return 변경된 유저 Entity
    */
@@ -52,7 +55,8 @@ public class UserEntity extends BaseEntity {
 
   /**
    * 비밀번호 확인
-   * @param plainPassword 암호화 이전의 비밀번호
+   * 
+   * @param plainPassword   암호화 이전의 비밀번호
    * @param passwordEncoder 암호화에 사용된 클래스
    * @return true | false
    */

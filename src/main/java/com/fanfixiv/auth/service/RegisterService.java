@@ -57,11 +57,9 @@ public class RegisterService {
       new DuplicateException("본인인증이 되어있지 않습니다.");
     }
 
-    ProfileEntity profile =
-        ProfileEntity.builder().nickname(dto.getNickname()).is_tr(false).build();
+    ProfileEntity profile = ProfileEntity.builder().nickname(dto.getNickname()).is_tr(false).build();
 
-    UserEntity user =
-        UserEntity.builder().email(redisDto.getEmail()).pw(dto.getPw()).profile(profile).build();
+    UserEntity user = UserEntity.builder().email(redisDto.getEmail()).pw(dto.getPw()).profile(profile).build();
 
     user.hashPassword(passwordEncoder);
 
@@ -83,21 +81,20 @@ public class RegisterService {
     String number = RandomProvider.getRandomNumber();
     LocalDateTime expireTime = new Timestamp(TimeProvider.getTimeAfter3min().getTime()).toLocalDateTime();
 
-    List<String> sendTo =
-        new ArrayList<String>() {
-          {
-            add(email);
-          }
-        };
+    List<String> sendTo = new ArrayList<String>() {
+      {
+        add(email);
+      }
+    };
 
     mailService.sendMail("회원가입 이메일", number, sendTo);
 
     RedisEmailAuthDto rDto = RedisEmailAuthDto.builder()
-    .uuid(uuid)
-    .email(email)
-    .number(number)
-    .expireTime(expireTime)
-    .build();
+        .uuid(uuid)
+        .email(email)
+        .number(number)
+        .expireTime(expireTime)
+        .build();
 
     redisEmailRepository.save(rDto);
 
@@ -107,12 +104,12 @@ public class RegisterService {
   public CertNumberResultDto certNumber(CertNumberDto dto) {
     Optional<RedisEmailAuthDto> redisDtoOptional = redisEmailRepository.findById(dto.getUuid());
 
-    if(redisDtoOptional.isPresent()) {
+    if (redisDtoOptional.isPresent()) {
       RedisEmailAuthDto redisDto = redisDtoOptional.get();
-      String number = redisDto.getNumber();      
+      String number = redisDto.getNumber();
       LocalDateTime expire = redisDto.getExpireTime();
-  
-      if(number.equals(dto.getNumber()) && expire.isAfter(LocalDateTime.now())) {
+
+      if (number.equals(dto.getNumber()) && expire.isAfter(LocalDateTime.now())) {
         redisDto.setSuccess(true);
         redisEmailRepository.save(redisDto);
         return new CertNumberResultDto(true);
