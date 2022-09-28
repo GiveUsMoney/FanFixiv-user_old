@@ -17,5 +17,8 @@ public class RegisterDto {
   private String nickname;
 
   @NotEmpty
+  private String birth;
+
+  @NotEmpty
   private String uuid;
 }

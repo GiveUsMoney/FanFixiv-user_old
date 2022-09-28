@@ -1,5 +1,6 @@
 package com.fanfixiv.auth.entity;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -27,6 +28,9 @@ public class ProfileEntity extends BaseEntity {
   @Column
   @ColumnDefault("now()")
   private LocalDateTime nn_md_date;
+
+  @Column
+  private LocalDate birth;
 
   @Column
   private String profile_img;

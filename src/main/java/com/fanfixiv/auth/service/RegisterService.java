@@ -17,13 +17,17 @@ import com.fanfixiv.auth.utils.RandomProvider;
 import com.fanfixiv.auth.utils.TimeProvider;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
 import lombok.RequiredArgsConstructor;
 
 import java.util.Optional;
+
+import javax.transaction.Transactional;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -41,25 +45,37 @@ public class RegisterService {
 
   private final BCryptPasswordEncoder passwordEncoder;
 
+  private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+  @Transactional
   public RegisterResultDto register(RegisterDto dto) {
     if (profileRepository.existsByNickname(dto.getNickname())) {
       throw new DuplicateException("이미 사용중인 닉네임입니다.");
     }
 
     Optional<RedisEmailAuthDto> _redisDto = redisEmailRepository.findById(dto.getUuid());
-    _redisDto.orElseThrow(() -> new DuplicateException("본인인증이 되어있지 않습니다."));
-    RedisEmailAuthDto redisDto = _redisDto.get();
+    RedisEmailAuthDto redisDto = _redisDto.orElseThrow(() -> new DuplicateException("본인인증이 되어있지 않습니다."));
 
     if (userRepository.existsByEmail(redisDto.getEmail())) {
       throw new DuplicateException("이미 사용중인 이메일입니다.");
     }
-    if (redisDto.isSuccess()) {
+    if (!redisDto.isSuccess()) {
       new DuplicateException("본인인증이 되어있지 않습니다.");
     }
 
-    ProfileEntity profile = ProfileEntity.builder().nickname(dto.getNickname()).is_tr(false).build();
+    LocalDate birth = LocalDate.parse(dto.getBirth(), this.formatter);
 
-    UserEntity user = UserEntity.builder().email(redisDto.getEmail()).pw(dto.getPw()).profile(profile).build();
+    ProfileEntity profile = ProfileEntity.builder()
+        .nickname(dto.getNickname())
+        .is_tr(false)
+        .birth(birth)
+        .build();
+
+    UserEntity user = UserEntity.builder()
+        .email(redisDto.getEmail())
+        .pw(dto.getPw())
+        .profile(profile)
+        .build();
 
     user.hashPassword(passwordEncoder);
 
@@ -68,10 +84,12 @@ public class RegisterService {
     return new RegisterResultDto("성공적으로 회원가입되었습니다.");
   }
 
+  @Transactional
   public DoubleCheckDto checkNickDouble(String nickname) {
     return new DoubleCheckDto(!profileRepository.existsByNickname(nickname));
   }
 
+  @Transactional
   public CertEmailResultDto certEmail(String email) {
     if (userRepository.existsByEmail(email)) {
       throw new DuplicateException("이미 사용중인 이메일입니다.");
@@ -101,6 +119,7 @@ public class RegisterService {
     return new CertEmailResultDto(uuid, expireTime);
   }
 
+  @Transactional
   public CertNumberResultDto certNumber(CertNumberDto dto) {
     Optional<RedisEmailAuthDto> redisDtoOptional = redisEmailRepository.findById(dto.getUuid());
 
