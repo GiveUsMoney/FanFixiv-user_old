@@ -1,19 +1,19 @@
 package com.fanfixiv.auth.entity;
 
-import com.fanfixiv.auth.interfaces.UserRoleEnum;
+import java.util.List;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -34,9 +34,9 @@ public class UserEntity extends BaseEntity {
   @Column
   private String pw;
 
-  @Enumerated(EnumType.STRING)
-  @ColumnDefault(value = "'USER'")
-  private UserRoleEnum role;
+  @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+  @JoinColumn(name = "user_seq")
+  private List<RoleEntity> role;
 
   @OneToOne(cascade = CascadeType.PERSIST)
   @JoinColumn(name = "profile_seq")

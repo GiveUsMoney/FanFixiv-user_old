@@ -6,8 +6,11 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+
 import java.util.Base64;
 import java.util.Date;
+import java.util.List;
+
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.Cookie;
@@ -34,7 +37,7 @@ public class JwtTokenProvider {
   private Long tokenValidTime;
 
   @Value("${jwt.refresh.tokenvalidtime}")
-  private Long refreshtokenValidTime;
+  private Long refreshTokenValidTime;
 
   private final UserDetailsService userDetailsService;
 
@@ -43,11 +46,29 @@ public class JwtTokenProvider {
     secret = Base64.getEncoder().encodeToString(secret.getBytes());
   }
 
-  public String createToken(Long userPk, UserRoleEnum roles) {
-    Claims claims = Jwts.claims().setSubject(userPk.toString());
-    claims.put("roles", roles);
+  public String createToken(Long userPk, List<UserRoleEnum> roles) {
     Date now = new Date();
+    return Jwts.builder()
+        .setSubject(userPk.toString())
+        .claim("roles", roles)
+        .setIssuedAt(now)
+        .setExpiration(new Date(now.getTime() + tokenValidTime))
+        .signWith(SignatureAlgorithm.HS256, secret)
+        .compact();
+  }
 
+  public String createTokenWithInVailedToken(String token) {
+    Claims claims = Jwts.claims();
+    try 
+    {
+      claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
+    }    
+    catch ( ExpiredJwtException ex )
+    {
+      claims = ex.getClaims();
+    }
+
+    Date now = new Date();
     return Jwts.builder()
         .setClaims(claims)
         .setIssuedAt(now)
@@ -56,26 +77,12 @@ public class JwtTokenProvider {
         .compact();
   }
 
-  public String createTokenWithInVailedToken(String token) {
-    Long pk = -1L;
-    UserRoleEnum role = UserRoleEnum.USER;
-    try {
-      pk = Long.parseLong(this.getUserPk(token));
-      role = UserRoleEnum.valueOf(this.getRoles(token));
-    } catch (ExpiredJwtException e) {
-      pk = Long.valueOf(e.getClaims().getSubject());
-      role = UserRoleEnum.valueOf(e.getClaims().get("roles", String.class));
-    }
-
-    return createToken(pk, role);
-  }
-
   public String createRefreshToken() {
     Date now = new Date();
 
     return Jwts.builder()
         .setIssuedAt(now)
-        .setExpiration(new Date(now.getTime() + refreshtokenValidTime))
+        .setExpiration(new Date(now.getTime() + refreshTokenValidTime))
         .signWith(SignatureAlgorithm.HS256, secret)
         .compact();
   }
@@ -106,10 +113,6 @@ public class JwtTokenProvider {
     return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody().getSubject();
   }
 
-  public String getRoles(String token) {
-    return (String) Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody().get("roles");
-  }
-
   public String resolveToken(ServletRequest request) {
     return ((HttpServletRequest) request).getHeader("Authorization");
   }
@@ -135,7 +138,7 @@ public class JwtTokenProvider {
     }
   }
 
-  private String bearerRemove(String token) {
+  public String bearerRemove(String token) {
     return token.replace("Bearer ", "");
   }
 }

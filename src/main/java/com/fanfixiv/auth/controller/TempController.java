@@ -4,11 +4,14 @@ import com.fanfixiv.auth.dto.TempEntity;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@Profile({"!prod"})
 @RestController
 @RequiredArgsConstructor
 @Api(tags = { "임시 API (후일 테스트와 함께 삭제해주세요)" })

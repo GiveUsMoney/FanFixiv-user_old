@@ -68,9 +68,22 @@ public class SecurityConfig {
         .antMatchers(HttpMethod.OPTIONS, "/**")
         .permitAll()
         .antMatchers("/login", "/register/**", "/", "/refresh")
-        .permitAll() // 로그인 회원가입은 보안 해제
+        .permitAll(); // 로그인 회원가입은 보안 해제
+    
+    http.authorizeRequests()
+        .antMatchers("/roles/user")
+        .hasRole("USER")
+        .antMatchers("/roles/artist")
+        .hasRole("ARTIST")
+        .antMatchers("/roles/trans")
+        .hasRole("TRANSLATER")
+        .antMatchers("/roles/admin")
+        .hasRole("ADMIN");
+        
+    http.authorizeRequests()
         .anyRequest()
         .authenticated();
+  
     http.exceptionHandling().authenticationEntryPoint(authenticationEntryPoint());
 
     http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
