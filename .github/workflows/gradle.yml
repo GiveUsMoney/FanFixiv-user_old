@@ -40,4 +40,6 @@ jobs:
         env:
           AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
           AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
+          MAIN_SERVER_URL: ${{ secrets.MAIN_SERVER_URL }}
           SECRET: ${{ secrets.SECRET }}
+          S3_URL: ${{ secrets.S3_URL }}
