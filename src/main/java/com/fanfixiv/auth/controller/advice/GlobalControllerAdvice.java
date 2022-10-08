@@ -4,6 +4,8 @@ import com.fanfixiv.auth.controller.LoginController;
 import com.fanfixiv.auth.controller.RegisterController;
 import com.fanfixiv.auth.exception.DuplicateException;
 import com.fanfixiv.auth.exception.ErrorResponse;
+import com.fanfixiv.auth.exception.MicroRequestException;
+
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +26,11 @@ public class GlobalControllerAdvice {
     return new ResponseEntity<ErrorResponse>(err, HttpStatus.UNAUTHORIZED);
   }
 
-  @ExceptionHandler({ MissingServletRequestParameterException.class, DuplicateException.class })
+  @ExceptionHandler({
+      MissingServletRequestParameterException.class,
+      DuplicateException.class,
+      MicroRequestException.class
+  })
   public ResponseEntity<ErrorResponse> handleMissingServletRequestParameterException(Exception e) {
     ErrorResponse err = new ErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
     return new ResponseEntity<ErrorResponse>(err, HttpStatus.BAD_REQUEST);

@@ -13,6 +13,7 @@ import com.fanfixiv.auth.exception.DuplicateException;
 import com.fanfixiv.auth.repository.ProfileRepository;
 import com.fanfixiv.auth.repository.RedisEmailRepository;
 import com.fanfixiv.auth.repository.UserRepository;
+import com.fanfixiv.auth.requester.RestRequester;
 import com.fanfixiv.auth.utils.RandomProvider;
 import com.fanfixiv.auth.utils.TimeProvider;
 
@@ -45,6 +46,8 @@ public class RegisterService {
 
   private final BCryptPasswordEncoder passwordEncoder;
 
+  private final RestRequester restRequester;
+
   private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
   @Transactional
@@ -63,12 +66,18 @@ public class RegisterService {
       new DuplicateException("본인인증이 되어있지 않습니다.");
     }
 
+    String profileImgUrl = "";
+    if (dto.getProfileImg() != null) {
+      profileImgUrl = restRequester.uploadProfileImg(dto.getProfileImg());
+    }
+
     LocalDate birth = LocalDate.parse(dto.getBirth(), this.formatter);
 
     ProfileEntity profile = ProfileEntity.builder()
         .nickname(dto.getNickname())
-        .is_tr(false)
+        .isTr(false)
         .birth(birth)
+        .profileImg(profileImgUrl)
         .build();
 
     UserEntity user = UserEntity.builder()
