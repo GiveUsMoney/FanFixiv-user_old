@@ -42,7 +42,7 @@ public class RegisterE2ETests {
         .then()
         .statusCode(200)
         .assertThat()
-        .body("canUse", equalTo(true));
+        .body("can_use", equalTo(true));
 
     profileRepository.save(
         ProfileEntity.builder()
@@ -55,7 +55,7 @@ public class RegisterE2ETests {
         .then()
         .statusCode(200)
         .assertThat()
-        .body("canUse", equalTo(false));
+        .body("can_use", equalTo(false));
 
   }
 
