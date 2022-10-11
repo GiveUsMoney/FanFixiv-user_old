@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import com.fanfixiv.auth.dto.server.BaseResultFormDto;
 import com.fanfixiv.auth.dto.server.ProfileFormDto;
 import com.fanfixiv.auth.dto.server.ProfileFormResultDto;
 import com.fanfixiv.auth.exception.MicroRequestException;
@@ -28,15 +29,14 @@ public class RestRequester {
 
   private final RedisTemplate<String, String> redisTemplate;
 
-  public String uploadProfileImg(String key) {
-    String uri = mainServerUrl + "profile-img/form"; // or any other uri
+  private <T extends BaseResultFormDto, E> T postRequest(String uri, E dto, Class<T> clazz) {
+    T result;
 
-    ProfileFormResultDto result;
     try {
       result = restTemplate.postForObject(
           uri,
-          new ProfileFormDto(key, redisTemplate.opsForValue().get("REDIS_AUTH")),
-          ProfileFormResultDto.class);
+          dto,
+          clazz);
     } catch (RestClientException e) {
       throw new MicroRequestException(
           "메인서버의 응답이 올바르지 않습니다.",
@@ -55,6 +55,17 @@ public class RestRequester {
               add(result.getMessage());
             }
           });
+
+    return result;
+  }
+
+  public String uploadProfileImg(String key) {
+    String uri = mainServerUrl + "profile-img/form"; // or any other uri
+
+    ProfileFormResultDto result = this.postRequest(
+        uri,
+        new ProfileFormDto(key, redisTemplate.opsForValue().get("REDIS_AUTH")),
+        ProfileFormResultDto.class);
 
     return s3Url + result.getKey();
   }

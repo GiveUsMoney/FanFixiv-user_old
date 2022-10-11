@@ -1,14 +1,10 @@
 package com.fanfixiv.auth.dto.server;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
 
-@Data
-@NoArgsConstructor
+@Getter
 @AllArgsConstructor
-public class ProfileFormResultDto {
-  private int status;
+public class ProfileFormResultDto extends BaseResultFormDto {
   private String key;
-  private String message;
 }
