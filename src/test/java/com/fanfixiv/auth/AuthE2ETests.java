@@ -44,6 +44,9 @@ public class AuthE2ETests {
   @Test
   @DisplayName("H2 데이터 베이스 테스트")
   void h2test() {
+
+    profileRepository.deleteAll();
+
     ProfileEntity _p = ProfileEntity.builder().nickname("테스트").descript("테스트입니다.").build();
 
     profileRepository.save(_p);
