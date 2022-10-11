@@ -7,7 +7,10 @@ import static org.mockito.Mockito.doAnswer;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +18,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.server.LocalServerPort;
 
+import com.fanfixiv.auth.dto.register.RegisterDto;
 import com.fanfixiv.auth.entity.ProfileEntity;
 import com.fanfixiv.auth.repository.ProfileRepository;
 import com.fanfixiv.auth.service.MailService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class RegisterE2ETests {
 
@@ -34,6 +40,7 @@ public class RegisterE2ETests {
   }
 
   @Test
+  @Order(1)
   @DisplayName("GET /register/dc-nick 200")
   void isNickDouble_e2e_200() {
     given()
@@ -42,7 +49,7 @@ public class RegisterE2ETests {
         .then()
         .statusCode(200)
         .assertThat()
-        .body("can_use", equalTo(true));
+        .body("canUse", equalTo(true));
 
     profileRepository.save(
         ProfileEntity.builder()
@@ -55,11 +62,12 @@ public class RegisterE2ETests {
         .then()
         .statusCode(200)
         .assertThat()
-        .body("can_use", equalTo(false));
+        .body("canUse", equalTo(false));
 
   }
 
   @Test
+  @Order(1)
   @DisplayName("GET /register/dc-nick 400")
   void isNickDouble_e2e_400() {
     given()
@@ -77,6 +85,7 @@ public class RegisterE2ETests {
   static String num = "";
 
   @Test
+  @Order(2)
   @DisplayName("GET /register/cert-email 200")
   void certEmail_e2e_200() {
     
@@ -90,7 +99,7 @@ public class RegisterE2ETests {
     .sendMail(anyString(), anyString(), anyList());
     
     RegisterE2ETests.uuid = given()
-        .param("email", "test@example.com")
+        .param("email", "register@test.com")
         .get("/register/cert-email")
         .then()
         .statusCode(200)
@@ -99,6 +108,7 @@ public class RegisterE2ETests {
   }
 
   @Test
+  @Order(2)
   @DisplayName("GET /register/cert-email 400")
   void certEmail_e2e_400() {
     given()
@@ -110,6 +120,7 @@ public class RegisterE2ETests {
   // ===
 
   @Test
+  @Order(3)
   @DisplayName("GET /register/cert-number 200")
   void certNumber_e2e_200() {
 
@@ -137,6 +148,7 @@ public class RegisterE2ETests {
   }
 
   @Test
+  @Order(3)
   @DisplayName("GET /register/cert-number 400")
   void certNumber_e2e_400() {
     given()
@@ -153,6 +165,57 @@ public class RegisterE2ETests {
         .param("uuid",
             "testuuid-1234")
         .get("/register/cert-email")
+        .then()
+        .statusCode(400);
+  }
+
+  // ===
+
+  ObjectMapper objectMapper = new ObjectMapper();
+
+  private String objToJson(Object obj) {
+    try {
+      return this.objectMapper.writeValueAsString(obj);
+    } catch (Exception e) {
+      return "";
+    }
+  }
+
+  @Test
+  @Order(4)
+  @DisplayName("POST /register 201")
+  void register_e2e_200() {
+
+    String pw = "password";
+    String nickname = "테스트계정";
+    String birth = "2002-08-19";
+
+    RegisterDto rgDto = new RegisterDto(
+        pw,
+        nickname,
+        birth,
+        RegisterE2ETests.uuid,
+        null);
+
+    given()
+        .contentType("application/json")
+        .body(this.objToJson(rgDto))
+        .post("/register")
+        .then()
+        .statusCode(201);
+  }
+
+  @Test
+  @Order(4)
+  @DisplayName("POST /register 400")
+  void register_e2e_400() {
+
+    RegisterDto rgDto = new RegisterDto();
+
+    given()
+        .contentType("application/json")
+        .body(this.objToJson(rgDto))
+        .post("/register")
         .then()
         .statusCode(400);
   }

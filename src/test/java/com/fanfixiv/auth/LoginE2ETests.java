@@ -7,7 +7,10 @@ import java.time.LocalDate;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -23,6 +26,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class LoginE2ETests {
 
@@ -56,14 +60,16 @@ public class LoginE2ETests {
   }
 
   @Test
+  @Order(1)
   @DisplayName("POST /login 200")
   void doLogin_e2e_200() {
 
     String email = "test@example.com";
     String pw = "password";
+    String nick = "테스트계정";
 
     ProfileEntity profile = ProfileEntity.builder()
-        .nickname("테스트계정")
+        .nickname(nick)
         .birth(LocalDate.of(2002, 8, 19))
         .build();
 
@@ -84,8 +90,7 @@ public class LoginE2ETests {
 
     ExtractableResponse<Response> res = given()
         .contentType("application/json")
-        .body(
-            this.objToJson(lgdto))
+        .body(this.objToJson(lgdto))
         .post("/login")
         .then()
         .statusCode(200)
@@ -96,6 +101,7 @@ public class LoginE2ETests {
   }
 
   @Test
+  @Order(1)
   @DisplayName("POST /login 401")
   void doLogin_e2e_401() {
 
@@ -116,6 +122,7 @@ public class LoginE2ETests {
   }
 
   @Test
+  @Order(1)
   @DisplayName("POST /login 400")
   void doLogin_e2e_400() {
 
@@ -134,6 +141,7 @@ public class LoginE2ETests {
   }
 
   @Test
+  @Order(2)
   @DisplayName("GET /profile 200")
   void getUserProfile_e2e_200() {
     ProfileResultDto actual = new ProfileResultDto(LoginE2ETests.user);
@@ -151,6 +159,7 @@ public class LoginE2ETests {
   }
 
   @Test
+  @Order(2)
   @DisplayName("GET /profile 401")
   void getUserProfile_e2e_401() {
     given()
