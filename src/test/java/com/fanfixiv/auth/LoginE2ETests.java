@@ -134,7 +134,7 @@ public class LoginE2ETests {
   }
 
   @Test
-  @DisplayName("POST /profile 200")
+  @DisplayName("GET /profile 200")
   void getUserProfile_e2e_200() {
     ProfileResultDto actual = new ProfileResultDto(LoginE2ETests.user);
     given()
@@ -151,7 +151,7 @@ public class LoginE2ETests {
   }
 
   @Test
-  @DisplayName("POST /profile 401")
+  @DisplayName("GET /profile 401")
   void getUserProfile_e2e_401() {
     given()
         .contentType("application/json")
