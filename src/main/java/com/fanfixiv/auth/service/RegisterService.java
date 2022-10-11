@@ -8,8 +8,10 @@ import com.fanfixiv.auth.dto.register.DoubleCheckDto;
 import com.fanfixiv.auth.dto.register.RegisterDto;
 import com.fanfixiv.auth.dto.register.RegisterResultDto;
 import com.fanfixiv.auth.entity.ProfileEntity;
+import com.fanfixiv.auth.entity.RoleEntity;
 import com.fanfixiv.auth.entity.UserEntity;
 import com.fanfixiv.auth.exception.DuplicateException;
+import com.fanfixiv.auth.interfaces.UserRoleEnum;
 import com.fanfixiv.auth.repository.ProfileRepository;
 import com.fanfixiv.auth.repository.RedisEmailRepository;
 import com.fanfixiv.auth.repository.UserRepository;
@@ -63,7 +65,7 @@ public class RegisterService {
       throw new DuplicateException("이미 사용중인 이메일입니다.");
     }
     if (!redisDto.isSuccess()) {
-      new DuplicateException("본인인증이 되어있지 않습니다.");
+      throw new DuplicateException("본인인증이 되어있지 않습니다.");
     }
 
     String profileImgUrl = "";
@@ -84,6 +86,11 @@ public class RegisterService {
         .email(redisDto.getEmail())
         .pw(dto.getPw())
         .profile(profile)
+        .role(new ArrayList<RoleEntity>() {
+          {
+            add(RoleEntity.builder().role(UserRoleEnum.ROLE_USER).build());
+          }
+        })
         .build();
 
     user.hashPassword(passwordEncoder);

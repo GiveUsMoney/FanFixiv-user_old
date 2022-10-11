@@ -28,11 +28,18 @@ public class GlobalControllerAdvice {
 
   @ExceptionHandler({
       MissingServletRequestParameterException.class,
-      DuplicateException.class,
-      MicroRequestException.class
+      DuplicateException.class
   })
   public ResponseEntity<ErrorResponse> handleMissingServletRequestParameterException(Exception e) {
     ErrorResponse err = new ErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
+    return new ResponseEntity<ErrorResponse>(err, HttpStatus.BAD_REQUEST);
+  }
+
+  @ExceptionHandler({
+      MicroRequestException.class
+  })
+  public ResponseEntity<ErrorResponse> handleMissingMicroRequestException(MicroRequestException e) {
+    ErrorResponse err = new ErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage(), e.getDefaultMessage());
     return new ResponseEntity<ErrorResponse>(err, HttpStatus.BAD_REQUEST);
   }
 
