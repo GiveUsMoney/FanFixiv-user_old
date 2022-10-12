@@ -53,7 +53,7 @@ public class LoginService {
     String refresh = jwtTokenProvider.createRefreshToken();
 
     redisAuthRepository.save(RedisAuthDto.builder().refreshToken(refresh).jwtToken(token).build());
-    
+
     response.setHeader("Set-Cookie", jwtTokenProvider.createRefreshTokenCookie(refresh).toString());
 
     return new LoginResultDto(token);
