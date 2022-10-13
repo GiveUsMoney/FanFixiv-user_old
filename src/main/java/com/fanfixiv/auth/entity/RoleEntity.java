@@ -8,7 +8,6 @@ import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
@@ -20,7 +19,6 @@ import com.fanfixiv.auth.interfaces.UserRoleEnum;
 @Entity
 @DynamicInsert
 @DynamicUpdate
-@NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "tb_role")
 public class RoleEntity extends BaseEntity {
@@ -31,4 +29,12 @@ public class RoleEntity extends BaseEntity {
   @Enumerated(EnumType.STRING)
   @ColumnDefault(value = "'ROLE_USER'")
   private UserRoleEnum role;
+
+  public RoleEntity() {
+    this.role = UserRoleEnum.ROLE_USER;
+  }
+
+  public RoleEntity(UserRoleEnum role) {
+    this.role = role;
+  }
 }

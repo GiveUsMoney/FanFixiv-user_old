@@ -4,14 +4,20 @@ import com.fanfixiv.auth.filter.CustomRequestEntityConverter;
 import com.fanfixiv.auth.filter.CustomTokenResponseConverter;
 import com.fanfixiv.auth.filter.JwtAuthenticationFilter;
 import com.fanfixiv.auth.handler.CustomAuthenticationEntryPoint;
+import com.fanfixiv.auth.handler.OAuth2SuccessHandler;
 import com.fanfixiv.auth.service.CustomOAuth2UserService;
 
 import lombok.RequiredArgsConstructor;
 
 import java.util.Arrays;
+import java.util.Collections;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.converter.FormHttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
@@ -38,6 +44,11 @@ public class SecurityConfig {
 
   private final CustomOAuth2UserService customOAuth2UserService;
 
+  private final OAuth2SuccessHandler oAuth2SuccessHandler;
+
+  @Value("${micro.frontend.url}")
+  private String frontend;
+
   @Bean
   public WebSecurityCustomizer configure() {
     // 해당 path들은 Security의 적용을 받지않음.
@@ -61,13 +72,20 @@ public class SecurityConfig {
   CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration configuration = new CorsConfiguration();
     configuration.setAllowedOrigins(
-        Arrays.asList("http://localhost:3000/", "https://giveusmoney.github.io/"));
+        Arrays.asList("http://localhost:3000/", frontend));
     configuration.setAllowedMethods(Arrays.asList("*"));
     configuration.setAllowedHeaders(Arrays.asList("*"));
     configuration.setAllowCredentials(true);
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     source.registerCorsConfiguration("/**", configuration);
     return source;
+  }
+
+  public MappingJackson2HttpMessageConverter getMappingJackson2HttpMessageConverter() {
+    MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter = new MappingJackson2HttpMessageConverter();
+    mappingJackson2HttpMessageConverter
+        .setSupportedMediaTypes(Collections.singletonList(MediaType.APPLICATION_FORM_URLENCODED));
+    return mappingJackson2HttpMessageConverter;
   }
 
   @Bean
@@ -78,8 +96,10 @@ public class SecurityConfig {
     OAuth2AccessTokenResponseHttpMessageConverter tokenResponseHttpMessageConverter = new OAuth2AccessTokenResponseHttpMessageConverter();
     tokenResponseHttpMessageConverter.setAccessTokenResponseConverter(new CustomTokenResponseConverter());
 
-    RestTemplate restTemplate = new RestTemplate(Arrays.asList(
-        new FormHttpMessageConverter(), tokenResponseHttpMessageConverter));
+    RestTemplate restTemplate = new RestTemplate(
+        Arrays.asList(
+            new FormHttpMessageConverter(),
+            tokenResponseHttpMessageConverter));
     restTemplate.setErrorHandler(new OAuth2ErrorResponseErrorHandler());
 
     accessTokenResponseClient.setRestOperations(restTemplate);
@@ -125,7 +145,9 @@ public class SecurityConfig {
         .accessTokenResponseClient(accessTokenResponseClient())
         .and()
         .userInfoEndpoint()
-        .userService(customOAuth2UserService);
+        .userService(customOAuth2UserService)
+        .and()
+        .successHandler(oAuth2SuccessHandler);
 
     http.exceptionHandling().authenticationEntryPoint(authenticationEntryPoint());
 
