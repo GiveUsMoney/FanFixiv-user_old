@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.fanfixiv.auth.dto.login.LoginDto;
@@ -139,7 +140,7 @@ public class LoginE2ETests {
     ProfileResultDto actual = new ProfileResultDto(LoginE2ETests.user);
     given()
         .contentType("application/json")
-        .header("Authorization", "Bearer " + LoginE2ETests.access_token)
+        .header(HttpHeaders.AUTHORIZATION, "Bearer " + LoginE2ETests.access_token)
         .get("/profile")
         .then()
         .statusCode(200)
@@ -155,7 +156,6 @@ public class LoginE2ETests {
   void getUserProfile_e2e_401() {
     given()
         .contentType("application/json")
-        .header("Authorization", "Bearer testjwttoken")
         .post("/profile")
         .then()
         .statusCode(401);
