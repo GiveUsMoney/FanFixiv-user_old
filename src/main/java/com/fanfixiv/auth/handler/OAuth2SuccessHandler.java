@@ -40,9 +40,12 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
       throws IOException, ServletException {
     OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
 
+    boolean isFirstLogin = false;
+
     UserEntity user = UserEntity.of(oAuth2User);
     if (!userRepository.existsByEmail(user.getEmail())) {
       userRepository.save(user);
+      isFirstLogin = true;
     }
     user = userRepository.findByEmail(user.getEmail());
 
@@ -59,6 +62,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
           .setPath("twitter/login")
           .addParameter("token", token)
           .addParameter("refresh", refresh)
+          .addParameter("birth", isFirstLogin ? "false" : "true")
           .build()
           .toString();
 
