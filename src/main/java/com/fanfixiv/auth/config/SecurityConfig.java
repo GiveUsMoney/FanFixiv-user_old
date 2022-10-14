@@ -4,20 +4,18 @@ import com.fanfixiv.auth.filter.CustomRequestEntityConverter;
 import com.fanfixiv.auth.filter.CustomTokenResponseConverter;
 import com.fanfixiv.auth.filter.JwtAuthenticationFilter;
 import com.fanfixiv.auth.handler.CustomAuthenticationEntryPoint;
+import com.fanfixiv.auth.handler.CustomForbiddenHandler;
 import com.fanfixiv.auth.handler.OAuth2SuccessHandler;
 import com.fanfixiv.auth.service.CustomOAuth2UserService;
 
 import lombok.RequiredArgsConstructor;
 
 import java.util.Arrays;
-import java.util.Collections;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
 import org.springframework.http.converter.FormHttpMessageConverter;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
@@ -30,6 +28,7 @@ import org.springframework.security.oauth2.client.http.OAuth2ErrorResponseErrorH
 import org.springframework.security.oauth2.core.http.converter.OAuth2AccessTokenResponseHttpMessageConverter;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.cors.CorsConfiguration;
@@ -64,6 +63,11 @@ public class SecurityConfig {
   }
 
   @Bean
+  public AccessDeniedHandler forbiddenHandler() {
+    return new CustomForbiddenHandler();
+  }
+
+  @Bean
   public BCryptPasswordEncoder bCryptPasswordEncoder() {
     return new BCryptPasswordEncoder();
   }
@@ -79,13 +83,6 @@ public class SecurityConfig {
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     source.registerCorsConfiguration("/**", configuration);
     return source;
-  }
-
-  public MappingJackson2HttpMessageConverter getMappingJackson2HttpMessageConverter() {
-    MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter = new MappingJackson2HttpMessageConverter();
-    mappingJackson2HttpMessageConverter
-        .setSupportedMediaTypes(Collections.singletonList(MediaType.APPLICATION_FORM_URLENCODED));
-    return mappingJackson2HttpMessageConverter;
   }
 
   @Bean
@@ -149,7 +146,9 @@ public class SecurityConfig {
         .and()
         .successHandler(oAuth2SuccessHandler);
 
-    http.exceptionHandling().authenticationEntryPoint(authenticationEntryPoint());
+    http.exceptionHandling()
+        .authenticationEntryPoint(authenticationEntryPoint())
+        .accessDeniedHandler(forbiddenHandler());
 
     http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
