@@ -111,8 +111,8 @@ public class SecurityConfig {
     http.cors();
     http.csrf().disable(); // CSRF 보안 해제
     http.sessionManagement()
-        .sessionCreationPolicy(
-            SessionCreationPolicy.STATELESS); // jwt token으로 인증하므로 stateless(인증정보를 서버에 남기지 않음) 하도록 처리.
+        .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+    // jwt token으로 인증하므로 stateless(인증정보를 서버에 남기지 않음) 하도록 처리.
 
     http.authorizeRequests()
         .antMatchers(HttpMethod.OPTIONS, "/**")
