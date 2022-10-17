@@ -27,18 +27,18 @@ public class ProfileEntity extends BaseEntity {
 
   @Column
   @ColumnDefault("now()")
-  private LocalDateTime nn_md_date;
+  private LocalDateTime nnMdDate;
 
   @Column
   private LocalDate birth;
 
   @Column
-  private String profile_img;
+  private String profileImg;
 
   @Column
   private String descript;
 
   @Column
   @ColumnDefault("false")
-  private boolean is_tr;
+  private boolean isTr;
 }

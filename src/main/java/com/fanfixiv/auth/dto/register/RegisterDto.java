@@ -21,4 +21,6 @@ public class RegisterDto {
 
   @NotEmpty
   private String uuid;
+
+  private String profileImg;
 }

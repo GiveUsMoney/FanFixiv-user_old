@@ -8,11 +8,14 @@ import com.fanfixiv.auth.dto.register.DoubleCheckDto;
 import com.fanfixiv.auth.dto.register.RegisterDto;
 import com.fanfixiv.auth.dto.register.RegisterResultDto;
 import com.fanfixiv.auth.entity.ProfileEntity;
+import com.fanfixiv.auth.entity.RoleEntity;
 import com.fanfixiv.auth.entity.UserEntity;
 import com.fanfixiv.auth.exception.DuplicateException;
+import com.fanfixiv.auth.interfaces.UserRoleEnum;
 import com.fanfixiv.auth.repository.ProfileRepository;
 import com.fanfixiv.auth.repository.RedisEmailRepository;
 import com.fanfixiv.auth.repository.UserRepository;
+import com.fanfixiv.auth.requester.RestRequester;
 import com.fanfixiv.auth.utils.RandomProvider;
 import com.fanfixiv.auth.utils.TimeProvider;
 
@@ -45,6 +48,8 @@ public class RegisterService {
 
   private final BCryptPasswordEncoder passwordEncoder;
 
+  private final RestRequester restRequester;
+
   private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
   @Transactional
@@ -60,21 +65,32 @@ public class RegisterService {
       throw new DuplicateException("이미 사용중인 이메일입니다.");
     }
     if (!redisDto.isSuccess()) {
-      new DuplicateException("본인인증이 되어있지 않습니다.");
+      throw new DuplicateException("본인인증이 되어있지 않습니다.");
+    }
+
+    String profileImgUrl = "";
+    if (dto.getProfileImg() != null) {
+      profileImgUrl = restRequester.uploadProfileImg(dto.getProfileImg());
     }
 
     LocalDate birth = LocalDate.parse(dto.getBirth(), this.formatter);
 
     ProfileEntity profile = ProfileEntity.builder()
         .nickname(dto.getNickname())
-        .is_tr(false)
+        .isTr(false)
         .birth(birth)
+        .profileImg(profileImgUrl)
         .build();
 
     UserEntity user = UserEntity.builder()
         .email(redisDto.getEmail())
         .pw(dto.getPw())
         .profile(profile)
+        .role(new ArrayList<RoleEntity>() {
+          {
+            add(RoleEntity.builder().role(UserRoleEnum.ROLE_USER).build());
+          }
+        })
         .build();
 
     user.hashPassword(passwordEncoder);

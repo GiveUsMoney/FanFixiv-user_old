@@ -6,5 +6,5 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class DoubleCheckDto {
-  private boolean can_use;
+  private boolean canUse;
 }

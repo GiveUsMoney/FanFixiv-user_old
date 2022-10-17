@@ -5,7 +5,6 @@ import com.fanfixiv.auth.dto.login.LoginDto;
 import com.fanfixiv.auth.dto.login.LoginResultDto;
 import com.fanfixiv.auth.dto.profile.ProfileResultDto;
 import com.fanfixiv.auth.service.LoginService;
-import java.security.Principal;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -39,7 +38,7 @@ public class LoginController {
   }
 
   @GetMapping("/profile")
-  public ProfileResultDto profile(@AuthenticationPrincipal User user, Principal principal)
+  public ProfileResultDto profile(@AuthenticationPrincipal User user)
       throws Exception {
     return new ProfileResultDto(user.getUser());
   }

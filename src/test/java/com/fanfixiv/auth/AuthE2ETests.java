@@ -19,9 +19,11 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class AuthE2ETests {
 
-  @Autowired private ProfileRepository profileRepository;
+  @Autowired
+  private ProfileRepository profileRepository;
 
-  @LocalServerPort private int _port;
+  @LocalServerPort
+  private int _port;
 
   @BeforeEach
   public void setUp() throws Exception {
@@ -42,12 +44,15 @@ public class AuthE2ETests {
   @Test
   @DisplayName("H2 데이터 베이스 테스트")
   void h2test() {
+
+    profileRepository.deleteAll();
+
     ProfileEntity _p = ProfileEntity.builder().nickname("테스트").descript("테스트입니다.").build();
 
     profileRepository.save(_p);
 
     ProfileEntity p = profileRepository.findAll().get(0);
 
-    assertEquals(_p.getNickname(), p.getNickname()); 
+    assertEquals(_p.getNickname(), p.getNickname());
   }
 }

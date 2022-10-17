@@ -60,8 +60,8 @@ public class UserEntity extends BaseEntity {
         .builder()
         .nickname(username)
         .descript(descript)
-        .profile_img(profileImg)
-        .is_tr(false)
+        .profileImg(profileImg)
+        .isTr(false)
         .build();
 
     RoleEntity role = new RoleEntity();

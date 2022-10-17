@@ -44,3 +44,6 @@ jobs:
           TWITTER_CLIENT_ID: ${{ secrets.TWITTER_CLIENT_ID }}
           TWITTER_CLIENT_SECRET: ${{ secrets.TWITTER_CLIENT_SECRET }}
           FRONTEND_URL: ${{ secrets.FRONTEND_URL }}
+          MAIN_SERVER_URL: ${{ secrets.MAIN_SERVER_URL }}
+          S3_URL: ${{ secrets.S3_URL }}
+          REDIS_HOST: 127.0.0.1

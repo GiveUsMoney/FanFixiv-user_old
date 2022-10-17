@@ -29,6 +29,16 @@
       "name": "micro.frontend.url",
       "type": "java.lang.String",
       "description": "프론트엔드 URL"
+    },
+    {
+      "name": "micro.main-server.url",
+      "type": "java.lang.String",
+      "description": "메인 서버 URL"
+    },
+    {
+      "name": "aws.s3.url",
+      "type": "java.lang.String",
+      "description": "s3 URL"
     }
   ]
 }
