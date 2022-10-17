@@ -43,3 +43,4 @@ jobs:
           MAIN_SERVER_URL: ${{ secrets.MAIN_SERVER_URL }}
           SECRET: ${{ secrets.SECRET }}
           S3_URL: ${{ secrets.S3_URL }}
+          REDIS_HOST: 127.0.0.1
