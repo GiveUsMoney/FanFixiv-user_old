@@ -19,9 +19,11 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class AuthE2ETests {
 
-  @Autowired private ProfileRepository profileRepository;
+  @Autowired
+  private ProfileRepository profileRepository;
 
-  @LocalServerPort private int _port;
+  @LocalServerPort
+  private int _port;
 
   @BeforeEach
   public void setUp() throws Exception {
@@ -51,6 +53,6 @@ public class AuthE2ETests {
 
     ProfileEntity p = profileRepository.findAll().get(0);
 
-    assertEquals(_p.getNickname(), p.getNickname()); 
+    assertEquals(_p.getNickname(), p.getNickname());
   }
 }

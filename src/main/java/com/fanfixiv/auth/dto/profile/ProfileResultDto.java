@@ -13,20 +13,20 @@ import lombok.Data;
 public class ProfileResultDto {
   private String email;
   private String nickname;
-  private LocalDateTime nn_md_date;
+  private LocalDateTime nnMdDate;
   private LocalDate birth;
-  private String profile_img;
+  private String profileImg;
   private String descript;
-  private boolean is_tr;
+  private boolean isTr;
 
   public ProfileResultDto(UserEntity user) {
     this.email = user.getEmail();
     this.nickname = user.getProfile().getNickname();
-    this.nn_md_date = user.getProfile().getNn_md_date();
+    this.nnMdDate = user.getProfile().getNnMdDate();
     this.birth = user.getProfile().getBirth();
-    this.profile_img = user.getProfile().getProfile_img();
+    this.profileImg = user.getProfile().getProfileImg();
     this.descript = user.getProfile().getDescript();
-    this.is_tr = user.getProfile().is_tr();
+    this.isTr = user.getProfile().isTr();
   }
 
 }

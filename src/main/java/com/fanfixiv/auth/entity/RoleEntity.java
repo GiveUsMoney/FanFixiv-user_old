@@ -25,8 +25,8 @@ import com.fanfixiv.auth.interfaces.UserRoleEnum;
 @Table(name = "tb_role")
 public class RoleEntity extends BaseEntity {
 
-  @Column()
-  private Long user_seq;
+  @Column(name = "user_seq")
+  private Long userSeq;
 
   @Enumerated(EnumType.STRING)
   @ColumnDefault(value = "'ROLE_USER'")
