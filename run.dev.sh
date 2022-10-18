@@ -1,1 +1,0 @@
-java -jar -Dspring.profiles.active=dev build/libs/auth-[0-9].[0-9].[0-9].jar
