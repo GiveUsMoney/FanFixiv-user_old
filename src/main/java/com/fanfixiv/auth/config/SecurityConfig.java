@@ -62,6 +62,7 @@ public class SecurityConfig {
 
     http.httpBasic().disable(); // Http Basic을 이용한 보안 해제
     http.formLogin().disable(); // 기본 Login Form 해제
+    http.logout().disable();
     http.cors();
     http.csrf().disable(); // CSRF 보안 해제
     http.sessionManagement()
@@ -70,7 +71,7 @@ public class SecurityConfig {
     http.authorizeRequests()
         .antMatchers(HttpMethod.OPTIONS, "/**")
         .permitAll()
-        .antMatchers("/login", "/register/**", "/", "/refresh")
+        .antMatchers("/login", "/logout", "/register/**", "/", "/refresh")
         .permitAll(); // 로그인 회원가입은 보안 해제
 
     http.authorizeRequests()

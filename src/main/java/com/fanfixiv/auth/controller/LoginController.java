@@ -3,8 +3,10 @@ package com.fanfixiv.auth.controller;
 import com.fanfixiv.auth.details.User;
 import com.fanfixiv.auth.dto.login.LoginDto;
 import com.fanfixiv.auth.dto.login.LoginResultDto;
+import com.fanfixiv.auth.dto.login.LogoutResultDto;
 import com.fanfixiv.auth.dto.profile.ProfileResultDto;
 import com.fanfixiv.auth.service.LoginService;
+
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +30,13 @@ public class LoginController {
   public LoginResultDto login(HttpServletResponse response, @RequestBody @Valid LoginDto loginDto)
       throws Exception {
     return loginService.doLogin(response, loginDto);
+  }
+
+  @PostMapping("/logout")
+  public LogoutResultDto logout(@CookieValue("refreshToken") String refresh,
+      @RequestHeader("Authorization") String token)
+      throws Exception {
+    return loginService.doLogout(refresh, token);
   }
 
   @PostMapping("/refresh")

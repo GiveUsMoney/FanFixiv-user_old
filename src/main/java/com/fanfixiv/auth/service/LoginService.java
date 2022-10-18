@@ -2,6 +2,7 @@ package com.fanfixiv.auth.service;
 
 import com.fanfixiv.auth.dto.login.LoginDto;
 import com.fanfixiv.auth.dto.login.LoginResultDto;
+import com.fanfixiv.auth.dto.login.LogoutResultDto;
 import com.fanfixiv.auth.dto.redis.RedisAuthDto;
 import com.fanfixiv.auth.entity.UserEntity;
 import com.fanfixiv.auth.interfaces.UserRoleEnum;
@@ -53,10 +54,26 @@ public class LoginService {
     String refresh = jwtTokenProvider.createRefreshToken();
 
     redisAuthRepository.save(RedisAuthDto.builder().refreshToken(refresh).jwtToken(token).build());
-    
+
     response.setHeader("Set-Cookie", jwtTokenProvider.createRefreshTokenCookie(refresh).toString());
 
     return new LoginResultDto(token);
+  }
+
+  public LogoutResultDto doLogout(String refresh, String token) throws Exception {
+
+    Optional<RedisAuthDto> _authDto = redisAuthRepository.findById(refresh);
+    RedisAuthDto authDto = _authDto.orElseThrow(() -> new BadCredentialsException("토큰값이 올바르지 않습니다."));
+
+    token = jwtTokenProvider.bearerRemove(token);
+
+    if (authDto.getJwtToken().equals(token)) {
+      redisAuthRepository.delete(authDto);
+      return new LogoutResultDto(true);
+    }
+
+    return new LogoutResultDto(false);
+
   }
 
   @Transactional
