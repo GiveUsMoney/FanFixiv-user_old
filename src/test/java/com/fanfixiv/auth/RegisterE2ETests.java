@@ -92,7 +92,7 @@ public class RegisterE2ETests {
     doAnswer(
       new Answer<Object>() {
       public Object answer(InvocationOnMock invocation) {
-          RegisterE2ETests.num = (String)invocation.getArgument(1);
+          RegisterE2ETests.num = (String)invocation.getArgument(0);
           return null;
       }})
     .when(mailService)
