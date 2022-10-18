@@ -115,13 +115,10 @@ public class RegisterService {
     String number = RandomProvider.getRandomNumber();
     LocalDateTime expireTime = new Timestamp(TimeProvider.getTimeAfter3min().getTime()).toLocalDateTime();
 
-    List<String> sendTo = new ArrayList<String>() {
-      {
-        add(email);
-      }
-    };
+    List<String> sendTo = new ArrayList<String>();
+    sendTo.add(email);
 
-    mailService.sendMail("회원가입 이메일", number, sendTo);
+    mailService.sendEmailAuthMail(number, sendTo);
 
     RedisEmailAuthDto rDto = RedisEmailAuthDto.builder()
         .uuid(uuid)

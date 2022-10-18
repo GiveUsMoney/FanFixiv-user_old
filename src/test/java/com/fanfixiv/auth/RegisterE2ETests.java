@@ -96,7 +96,7 @@ public class RegisterE2ETests {
           return null;
       }})
     .when(mailService)
-    .sendMail(anyString(), anyString(), anyList());
+    .sendEmailAuthMail(anyString(), anyList());
     
     RegisterE2ETests.uuid = given()
         .param("email", "register@test.com")
