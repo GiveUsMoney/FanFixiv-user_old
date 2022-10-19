@@ -76,7 +76,10 @@ public class SecurityConfig {
   CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration configuration = new CorsConfiguration();
     configuration.setAllowedOrigins(
-        Arrays.asList("http://localhost:3000/", frontend));
+        Arrays.asList(
+            "http://localhost:3000/",
+            frontend,
+            "https://aumlaytno6.execute-api.ap-northeast-2.amazonaws.com/"));
     configuration.setAllowedMethods(Arrays.asList("*"));
     configuration.setAllowedHeaders(Arrays.asList("*"));
     configuration.setAllowCredentials(true);
