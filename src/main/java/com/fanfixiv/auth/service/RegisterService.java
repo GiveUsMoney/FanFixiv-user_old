@@ -113,7 +113,7 @@ public class RegisterService {
 
     List<String> sendTo = Arrays.asList(email);
 
-    mailService.sendMail("회원가입 이메일", number, sendTo);
+    mailService.sendEmailAuthMail(number, sendTo);
 
     RedisEmailAuthDto rDto = RedisEmailAuthDto.builder()
         .uuid(uuid)

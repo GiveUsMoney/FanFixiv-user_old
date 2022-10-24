@@ -3,6 +3,8 @@ package com.fanfixiv.auth.service;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.spring5.SpringTemplateEngine;
 
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
 import com.amazonaws.services.simpleemail.model.SendEmailResult;
@@ -18,7 +20,19 @@ public class MailService {
 
   private final AmazonSimpleEmailService amazonSimpleEmailService;
 
-  public void sendMail(final String subject, final String content, final List<String> receivers) {
+  private final SpringTemplateEngine templateEngine;
+
+  public void sendEmailAuthMail(final String number, final List<String> receivers) {
+    Context context = new Context();
+
+    context.setVariable("number", number);
+
+    String html = templateEngine.process("auth", context);
+
+    sendMail("FanFixiv 본인인증 이메일", html, receivers);
+  }
+
+  private void sendMail(final String subject, final String content, final List<String> receivers) {
     final EmailDto senderDto = EmailDto.builder() // 1
         .to(receivers)
         .subject(subject)
