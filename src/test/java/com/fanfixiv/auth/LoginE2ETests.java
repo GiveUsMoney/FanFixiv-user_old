@@ -47,8 +47,8 @@ public class LoginE2ETests {
 
   ObjectMapper objectMapper = new ObjectMapper();
 
-  static String access_token = "";
-  static String refresh_token = "";
+  static String accessToken = "";
+  static String refreshToken = "";
 
   static UserEntity user;
 
@@ -97,8 +97,8 @@ public class LoginE2ETests {
         .statusCode(200)
         .extract();
 
-    LoginE2ETests.refresh_token = res.header("Set-Cookie");
-    LoginE2ETests.access_token = res.path("token");
+    LoginE2ETests.refreshToken = res.header("Set-Cookie").replace("refreshToken=", "");
+    LoginE2ETests.accessToken = res.path("token");
   }
 
   @Test
@@ -148,7 +148,7 @@ public class LoginE2ETests {
     ProfileResultDto actual = new ProfileResultDto(LoginE2ETests.user);
     given()
         .contentType("application/json")
-        .header(HttpHeaders.AUTHORIZATION, "Bearer " + LoginE2ETests.access_token)
+        .header(HttpHeaders.AUTHORIZATION, "Bearer " + LoginE2ETests.accessToken)
         .get("/profile")
         .then()
         .statusCode(200)
@@ -166,6 +166,63 @@ public class LoginE2ETests {
     given()
         .contentType("application/json")
         .post("/profile")
+        .then()
+        .statusCode(401);
+  }
+
+  @Test
+  @Order(3)
+  @DisplayName("POST /refresh 200")
+  void refreshToken_e2e_200() {
+    ExtractableResponse<Response> res = given()
+        .contentType("application/json")
+        .header(HttpHeaders.AUTHORIZATION, "Bearer " + LoginE2ETests.accessToken)
+        .cookie("refreshToken", LoginE2ETests.refreshToken)
+        .post("/refresh")
+        .then()
+        .statusCode(200)
+        .extract();
+
+    LoginE2ETests.accessToken = res.path("token");
+  }
+
+  @Test
+  @Order(3)
+  @DisplayName("POST /refresh 401")
+  void refreshToken_e2e_401() {
+    given()
+        .contentType("application/json")
+        .header(HttpHeaders.AUTHORIZATION, "Bearer TESTTOKEN")
+        .cookie("refreshToken", "TESTTOKEN")
+        .post("/refresh")
+        .then()
+        .statusCode(401);
+  }
+
+  @Test
+  @Order(4)
+  @DisplayName("POST /logout 200")
+  void logout_e2e_200() {
+    given()
+        .contentType("application/json")
+        .header(HttpHeaders.AUTHORIZATION, "Bearer " + LoginE2ETests.accessToken)
+        .cookie("refreshToken", LoginE2ETests.refreshToken)
+        .post("/logout")
+        .then()
+        .statusCode(200)
+        .assertThat()
+        .body("success", equalTo(true));
+  }
+
+  @Test
+  @Order(4)
+  @DisplayName("POST /logout 401")
+  void logout_e2e_401() {
+    given()
+        .contentType("application/json")
+        .header(HttpHeaders.AUTHORIZATION, "Bearer TESTTOKEN")
+        .cookie("refreshToken", "TESTTOKEN")
+        .post("/logout")
         .then()
         .statusCode(401);
   }
