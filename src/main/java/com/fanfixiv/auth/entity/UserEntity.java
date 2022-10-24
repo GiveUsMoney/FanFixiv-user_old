@@ -1,5 +1,6 @@
 package com.fanfixiv.auth.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -17,6 +18,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
 @Getter
 @Builder
@@ -41,6 +43,40 @@ public class UserEntity extends BaseEntity {
   @OneToOne(cascade = CascadeType.PERSIST)
   @JoinColumn(name = "profile_seq")
   private ProfileEntity profile;
+
+  public static UserEntity of(OAuth2User oauth2) {
+
+    return UserEntity.of(
+        (String) oauth2.getAttribute("username"),
+        (String) oauth2.getAttribute("description"),
+        (String) oauth2.getAttribute("profile_image_url"),
+        (String) oauth2.getAttribute("id"),
+        null);
+  }
+
+  public static UserEntity of(String username, String descript, String profileImg, String email, String pw) {
+
+    ProfileEntity profile = ProfileEntity
+        .builder()
+        .nickname(username)
+        .descript(descript)
+        .profileImg(profileImg)
+        .isTr(false)
+        .build();
+
+    RoleEntity role = new RoleEntity();
+
+    List<RoleEntity> roleLst = new ArrayList<RoleEntity>();
+    roleLst.add(role);
+
+    return UserEntity
+        .builder()
+        .email(email)
+        .pw(pw)
+        .profile(profile)
+        .role(roleLst)
+        .build();
+  }
 
   /**
    * 비밀번호를 암호화
