@@ -9,6 +9,7 @@ import com.fanfixiv.auth.interfaces.UserRoleEnum;
 import com.fanfixiv.auth.repository.RedisAuthRepository;
 import com.fanfixiv.auth.repository.UserRepository;
 import com.fanfixiv.auth.utils.JwtTokenProvider;
+import com.google.common.net.HttpHeaders;
 
 import java.util.List;
 import java.util.Optional;
@@ -55,8 +56,7 @@ public class LoginService {
 
     redisAuthRepository.save(RedisAuthDto.builder().refreshToken(refresh).jwtToken(token).build());
 
-    response.setHeader("Set-Cookie", jwtTokenProvider.createRefreshTokenCookie(refresh).toString());
-
+    response.setHeader(HttpHeaders.SET_COOKIE, jwtTokenProvider.createRefreshTokenCookie(refresh).toString());
     return new LoginResultDto(token);
   }
 
