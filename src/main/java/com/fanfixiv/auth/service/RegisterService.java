@@ -23,7 +23,7 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import lombok.RequiredArgsConstructor;
@@ -86,11 +86,7 @@ public class RegisterService {
         .email(redisDto.getEmail())
         .pw(dto.getPw())
         .profile(profile)
-        .role(new ArrayList<RoleEntity>() {
-          {
-            add(RoleEntity.builder().role(UserRoleEnum.ROLE_USER).build());
-          }
-        })
+        .role(Arrays.asList(RoleEntity.builder().role(UserRoleEnum.ROLE_USER).build()))
         .build();
 
     user.hashPassword(passwordEncoder);
@@ -115,8 +111,7 @@ public class RegisterService {
     String number = RandomProvider.getRandomNumber();
     LocalDateTime expireTime = new Timestamp(TimeProvider.getTimeAfter3min().getTime()).toLocalDateTime();
 
-    List<String> sendTo = new ArrayList<String>();
-    sendTo.add(email);
+    List<String> sendTo = Arrays.asList(email);
 
     mailService.sendEmailAuthMail(number, sendTo);
 

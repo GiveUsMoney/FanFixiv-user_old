@@ -1,6 +1,6 @@
 package com.fanfixiv.auth.requester;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -40,21 +40,13 @@ public class RestRequester {
     } catch (RestClientException e) {
       throw new MicroRequestException(
           "메인서버의 응답이 올바르지 않습니다.",
-          new ArrayList<String>() {
-            {
-              add(e.getMessage());
-            }
-          });
+          Arrays.asList(e.getMessage()));
     }
 
     if (result == null || result.getStatus() == 400)
       throw new MicroRequestException(
           "메인서버의 응답이 올바르지 않습니다.",
-          result == null ? null : new ArrayList<String>() {
-            {
-              add(result.getMessage());
-            }
-          });
+          result == null ? null : Arrays.asList(result.getMessage()));
 
     return result;
   }
