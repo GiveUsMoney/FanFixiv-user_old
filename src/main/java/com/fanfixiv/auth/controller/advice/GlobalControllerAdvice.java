@@ -2,7 +2,9 @@ package com.fanfixiv.auth.controller.advice;
 
 import com.fanfixiv.auth.controller.LoginController;
 import com.fanfixiv.auth.controller.RegisterController;
+import com.fanfixiv.auth.controller.ResetController;
 import com.fanfixiv.auth.exception.DuplicateException;
+import com.fanfixiv.auth.exception.EmailNotExisitException;
 import com.fanfixiv.auth.exception.ErrorResponse;
 import com.fanfixiv.auth.exception.MicroRequestException;
 
@@ -18,8 +20,9 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-@ControllerAdvice(basePackageClasses = { LoginController.class, RegisterController.class })
+@ControllerAdvice(basePackageClasses = { LoginController.class, RegisterController.class, ResetController.class })
 public class GlobalControllerAdvice {
+
   @ExceptionHandler({ UsernameNotFoundException.class, BadCredentialsException.class })
   public ResponseEntity<ErrorResponse> handleLoginException(Exception e) {
     ErrorResponse err = new ErrorResponse(HttpStatus.UNAUTHORIZED, e.getMessage());
@@ -28,7 +31,8 @@ public class GlobalControllerAdvice {
 
   @ExceptionHandler({
       MissingServletRequestParameterException.class,
-      DuplicateException.class
+      DuplicateException.class,
+      EmailNotExisitException.class
   })
   public ResponseEntity<ErrorResponse> handleMissingServletRequestParameterException(Exception e) {
     ErrorResponse err = new ErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
