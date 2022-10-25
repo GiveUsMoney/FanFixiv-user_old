@@ -1,9 +1,9 @@
 package com.fanfixiv.auth.dto.login;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 
-@Data
+@Getter
 @AllArgsConstructor
 public class LoginResultDto {
   private String token;
