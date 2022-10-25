@@ -45,7 +45,7 @@ public class SecurityConfig {
 
   private final OAuth2SuccessHandler oAuth2SuccessHandler;
 
-  @Value("${micro.frontend.url}")
+  @Value("${micro.frontend.origin}")
   private String frontend;
 
   @Bean

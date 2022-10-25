@@ -26,6 +26,11 @@
       "description": "AWS 접근 키"
     },
     {
+      "name": "micro.frontend.origin",
+      "type": "java.lang.String",
+      "description": "프론트엔드 오리진"
+    },
+    {
       "name": "micro.frontend.url",
       "type": "java.lang.String",
       "description": "프론트엔드 URL"
