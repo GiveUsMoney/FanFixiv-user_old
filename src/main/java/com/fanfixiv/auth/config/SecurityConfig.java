@@ -121,7 +121,7 @@ public class SecurityConfig {
     http.authorizeRequests()
         .antMatchers(HttpMethod.OPTIONS, "/**")
         .permitAll()
-        .antMatchers("/", "/login", "/logout", "/register/**", "/reset/**", "/refresh")
+        .antMatchers("/", "/login", "/logout", "/refresh", "/register/**", "/reset/**")
         .permitAll(); // 로그인 회원가입은 보안 해제
 
     http.authorizeRequests()

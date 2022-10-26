@@ -86,7 +86,7 @@ public class RegisterService {
         .email(redisDto.getEmail())
         .pw(dto.getPw())
         .profile(profile)
-        .role(Arrays.asList(RoleEntity.builder().role(UserRoleEnum.ROLE_USER).build()))
+        .role(Arrays.asList(new RoleEntity(UserRoleEnum.ROLE_USER)))
         .build();
 
     user.hashPassword(passwordEncoder);
