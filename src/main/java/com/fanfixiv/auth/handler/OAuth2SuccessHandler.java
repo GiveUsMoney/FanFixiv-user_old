@@ -63,9 +63,19 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     // 리다이렉트 URL 발급
     String targetUrl;
     try {
+
       // 리다이렉트
-      targetUrl = new URIBuilder(url)
-          .setPath("twitter/login")
+
+      String path = "";
+
+      URIBuilder builder = new URIBuilder(url);
+
+      if (!(builder.isPathEmpty())) {
+        path += builder.getPath();
+      }
+
+      targetUrl = builder
+          .setPath(path + "/twitter/login")
           .addParameter("token", token)
           .addParameter("birth", birth)
           .build()
