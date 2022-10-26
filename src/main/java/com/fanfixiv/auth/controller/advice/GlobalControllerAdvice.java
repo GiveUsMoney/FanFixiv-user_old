@@ -7,6 +7,7 @@ import com.fanfixiv.auth.exception.DuplicateException;
 import com.fanfixiv.auth.exception.EmailNotExisitException;
 import com.fanfixiv.auth.exception.ErrorResponse;
 import com.fanfixiv.auth.exception.MicroRequestException;
+import com.fanfixiv.auth.exception.TokenNotValidException;
 
 import java.util.List;
 import org.springframework.http.HttpStatus;
@@ -32,7 +33,8 @@ public class GlobalControllerAdvice {
   @ExceptionHandler({
       MissingServletRequestParameterException.class,
       DuplicateException.class,
-      EmailNotExisitException.class
+      EmailNotExisitException.class,
+      TokenNotValidException.class
   })
   public ResponseEntity<ErrorResponse> handleMissingServletRequestParameterException(Exception e) {
     ErrorResponse err = new ErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());

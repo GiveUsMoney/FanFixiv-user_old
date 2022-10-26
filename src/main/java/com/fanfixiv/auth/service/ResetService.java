@@ -5,7 +5,6 @@ import java.util.Optional;
 
 import javax.transaction.Transactional;
 
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +14,7 @@ import com.fanfixiv.auth.dto.register.CertEmailDto;
 import com.fanfixiv.auth.dto.reset.ResetTokenDto;
 import com.fanfixiv.auth.entity.UserEntity;
 import com.fanfixiv.auth.exception.EmailNotExisitException;
+import com.fanfixiv.auth.exception.TokenNotValidException;
 import com.fanfixiv.auth.repository.RedisResetRepository;
 import com.fanfixiv.auth.repository.UserRepository;
 import com.fanfixiv.auth.utils.RandomProvider;
@@ -59,7 +59,7 @@ public class ResetService {
 
     Optional<RedisResetDto> _rDto = redisResetRepository.findById(dto.getToken());
 
-    RedisResetDto rDto = _rDto.orElseThrow(() -> new BadCredentialsException("토큰값이 올바르지 않습니다."));
+    RedisResetDto rDto = _rDto.orElseThrow(() -> new TokenNotValidException("토큰값이 올바르지 않습니다."));
 
     redisResetRepository.deleteById(rDto.getUuid());
 
