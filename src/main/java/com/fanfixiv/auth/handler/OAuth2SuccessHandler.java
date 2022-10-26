@@ -41,14 +41,12 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
       throws IOException, ServletException {
     OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
 
-    String birth = "true";
-
     UserEntity user = UserEntity.of(oAuth2User);
     if (!userRepository.existsByEmail(user.getEmail())) {
-      userRepository.save(user);
-      birth = "false";
+      user = userRepository.save(user);
+    } else {
+      user = userRepository.findByEmail(user.getEmail());
     }
-    user = userRepository.findByEmail(user.getEmail());
 
     // 토큰 발급
     List<UserRoleEnum> roles = user.getRole().stream().map(item -> item.getRole()).toList();
@@ -63,13 +61,10 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     // 리다이렉트 URL 발급
     String targetUrl;
     try {
-
       // 리다이렉트
-
       String path = "";
 
       URIBuilder builder = new URIBuilder(url);
-
       if (!(builder.isPathEmpty())) {
         path += builder.getPath();
       }
@@ -77,7 +72,6 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
       targetUrl = builder
           .setPath(path + "/twitter/login")
           .addParameter("token", token)
-          .addParameter("birth", birth)
           .build()
           .toString();
 
