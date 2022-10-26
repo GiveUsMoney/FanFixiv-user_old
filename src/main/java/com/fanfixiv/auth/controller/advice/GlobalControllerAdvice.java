@@ -18,11 +18,18 @@ import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.InitBinder;
 
 @ControllerAdvice(basePackageClasses = { LoginController.class, RegisterController.class, ResetController.class })
 public class GlobalControllerAdvice {
+
+  @InitBinder
+  public void initBinder(WebDataBinder binder) {
+    binder.initDirectFieldAccess();
+  }
 
   @ExceptionHandler({ UsernameNotFoundException.class, BadCredentialsException.class })
   public ResponseEntity<ErrorResponse> handleLoginException(Exception e) {
