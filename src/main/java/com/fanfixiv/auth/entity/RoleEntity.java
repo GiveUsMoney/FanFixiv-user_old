@@ -8,6 +8,8 @@ import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
+
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
@@ -15,6 +17,7 @@ import org.hibernate.annotations.DynamicUpdate;
 import com.fanfixiv.auth.interfaces.UserRoleEnum;
 
 @Getter
+@Setter
 @Builder
 @Entity
 @DynamicInsert

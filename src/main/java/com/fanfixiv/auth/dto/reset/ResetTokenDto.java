@@ -1,4 +1,4 @@
-package com.fanfixiv.auth.dto.register;
+package com.fanfixiv.auth.dto.reset;
 
 import javax.validation.constraints.NotEmpty;
 
@@ -9,10 +9,9 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CertNumberDto {
+public class ResetTokenDto {
   @NotEmpty
-  private String uuid;
-
+  private String token;
   @NotEmpty
-  private String number;
+  private String pw;
 }

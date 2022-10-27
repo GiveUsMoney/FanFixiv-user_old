@@ -72,8 +72,7 @@ public class LoginService {
       return new LogoutResultDto(true);
     }
 
-    return new LogoutResultDto(false);
-
+    throw new BadCredentialsException("토큰값이 올바르지 않습니다.");
   }
 
   @Transactional
