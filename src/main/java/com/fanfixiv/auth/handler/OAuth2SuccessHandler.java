@@ -2,6 +2,7 @@ package com.fanfixiv.auth.handler;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.time.LocalDate;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -20,6 +21,7 @@ import com.fanfixiv.auth.dto.redis.RedisAuthDto;
 import com.fanfixiv.auth.entity.UserEntity;
 import com.fanfixiv.auth.interfaces.UserRoleEnum;
 import com.fanfixiv.auth.repository.RedisAuthRepository;
+import com.fanfixiv.auth.repository.SecessionRepository;
 import com.fanfixiv.auth.repository.UserRepository;
 import com.fanfixiv.auth.utils.JwtTokenProvider;
 
@@ -29,6 +31,7 @@ import lombok.RequiredArgsConstructor;
 @Component
 public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
   private final UserRepository userRepository;
+  private final SecessionRepository secessionRepository;
   private final JwtTokenProvider jwtTokenProvider;
   private final RedisAuthRepository redisAuthRepository;
 
@@ -42,23 +45,31 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
 
     String birth = "true";
+    String token = "";
+    String refresh = "";
+    boolean joined = false;
 
     UserEntity user = UserEntity.of(oAuth2User);
-    if (!userRepository.existsByEmail(user.getEmail())) {
-      userRepository.save(user);
-      birth = "false";
+    if (!(secessionRepository.existsByEmail(user.getEmail()) &&
+        secessionRepository.findByEmail(user.getEmail()).getSecDate().plusDays(30).isBefore(LocalDate.now()))) {
+      if (!userRepository.existsByEmail(user.getEmail())) {
+        userRepository.save(user);
+        birth = "false";
+      }
+      user = userRepository.findByEmail(user.getEmail());
+
+      // 토큰 발급
+      List<UserRoleEnum> roles = user.getRole().stream().map(item -> item.getRole()).toList();
+
+      token = jwtTokenProvider.createToken(user.getSeq(), roles);
+      refresh = jwtTokenProvider.createRefreshToken();
+
+      redisAuthRepository.save(RedisAuthDto.builder().refreshToken(refresh).jwtToken(token).build());
+
+      response.setHeader(HttpHeaders.SET_COOKIE, jwtTokenProvider.createRefreshTokenCookie(refresh).toString());
+
+      joined = true;
     }
-    user = userRepository.findByEmail(user.getEmail());
-
-    // 토큰 발급
-    List<UserRoleEnum> roles = user.getRole().stream().map(item -> item.getRole()).toList();
-
-    String token = jwtTokenProvider.createToken(user.getSeq(), roles);
-    String refresh = jwtTokenProvider.createRefreshToken();
-
-    redisAuthRepository.save(RedisAuthDto.builder().refreshToken(refresh).jwtToken(token).build());
-
-    response.setHeader(HttpHeaders.SET_COOKIE, jwtTokenProvider.createRefreshTokenCookie(refresh).toString());
 
     // 리다이렉트 URL 발급
     String targetUrl;
@@ -75,7 +86,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
       }
 
       targetUrl = builder
-          .setPath(path + "/twitter/login")
+          .setPath(path + (joined ? "/twitter/login" : "/twitter/login-false"))
           .addParameter("token", token)
           .addParameter("birth", birth)
           .build()

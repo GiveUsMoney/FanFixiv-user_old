@@ -1,15 +1,19 @@
 package com.fanfixiv.auth.controller;
 
 import com.fanfixiv.auth.details.User;
+import com.fanfixiv.auth.dto.BaseResultDto;
 import com.fanfixiv.auth.dto.login.LoginDto;
 import com.fanfixiv.auth.dto.login.LoginResultDto;
 import com.fanfixiv.auth.dto.login.LogoutResultDto;
 import com.fanfixiv.auth.dto.profile.ProfileResultDto;
+import com.fanfixiv.auth.dto.secession.SecessionDto;
 import com.fanfixiv.auth.service.LoginService;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -50,5 +54,11 @@ public class LoginController {
   public ProfileResultDto profile(@AuthenticationPrincipal User user)
       throws Exception {
     return new ProfileResultDto(user.getUser());
+  }
+
+  @PostMapping("/secession")
+  public BaseResultDto secession(@AuthenticationPrincipal User user,
+      @RequestBody(required = false) @Nullable @Valid SecessionDto dto) {
+    return loginService.doSecession(user, dto);
   }
 }

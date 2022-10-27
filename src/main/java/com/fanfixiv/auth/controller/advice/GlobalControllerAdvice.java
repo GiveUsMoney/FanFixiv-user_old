@@ -7,6 +7,8 @@ import com.fanfixiv.auth.exception.DuplicateException;
 import com.fanfixiv.auth.exception.EmailNotExisitException;
 import com.fanfixiv.auth.exception.ErrorResponse;
 import com.fanfixiv.auth.exception.MicroRequestException;
+import com.fanfixiv.auth.exception.PasswordNotCorrectException;
+import com.fanfixiv.auth.exception.SecessionAccountExcetpion;
 import com.fanfixiv.auth.exception.TokenNotValidException;
 
 import java.util.List;
@@ -41,7 +43,9 @@ public class GlobalControllerAdvice {
       MissingServletRequestParameterException.class,
       DuplicateException.class,
       EmailNotExisitException.class,
-      TokenNotValidException.class
+      TokenNotValidException.class,
+      SecessionAccountExcetpion.class,
+      PasswordNotCorrectException.class
   })
   public ResponseEntity<ErrorResponse> handleMissingServletRequestParameterException(Exception e) {
     ErrorResponse err = new ErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());

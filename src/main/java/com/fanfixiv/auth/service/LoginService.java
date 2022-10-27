@@ -1,12 +1,18 @@
 package com.fanfixiv.auth.service;
 
+import com.fanfixiv.auth.details.User;
+import com.fanfixiv.auth.dto.BaseResultDto;
 import com.fanfixiv.auth.dto.login.LoginDto;
 import com.fanfixiv.auth.dto.login.LoginResultDto;
 import com.fanfixiv.auth.dto.login.LogoutResultDto;
 import com.fanfixiv.auth.dto.redis.RedisAuthDto;
+import com.fanfixiv.auth.dto.secession.SecessionDto;
+import com.fanfixiv.auth.entity.SecessionEntity;
 import com.fanfixiv.auth.entity.UserEntity;
+import com.fanfixiv.auth.exception.PasswordNotCorrectException;
 import com.fanfixiv.auth.interfaces.UserRoleEnum;
 import com.fanfixiv.auth.repository.RedisAuthRepository;
+import com.fanfixiv.auth.repository.SecessionRepository;
 import com.fanfixiv.auth.repository.UserRepository;
 import com.fanfixiv.auth.utils.JwtTokenProvider;
 import com.google.common.net.HttpHeaders;
@@ -31,6 +37,8 @@ public class LoginService {
   private final JwtTokenProvider jwtTokenProvider;
 
   private final UserRepository userRepository;
+
+  private final SecessionRepository secessionRepository;
 
   private final RedisAuthRepository redisAuthRepository;
 
@@ -89,5 +97,26 @@ public class LoginService {
     }
 
     throw new BadCredentialsException("토큰값이 올바르지 않습니다.");
+  }
+
+  @Transactional
+  public BaseResultDto doSecession(User user, SecessionDto dto) {
+    Long seq = user.getUserSeq();
+    String email = user.getUserEmail();
+
+    UserEntity userEntity = userRepository.findById(seq).get();
+
+    if (dto == null && userEntity.getPw() != null) {
+      throw new PasswordNotCorrectException("비밀번호를 입력해주세요.");
+    }
+
+    if (dto != null && !userEntity.checkPassword(dto.getPw(), passwordEncoder)) {
+      throw new PasswordNotCorrectException("비밀번호가 일치하지 않습니다.");
+    }
+
+    userRepository.delete(userEntity);
+    secessionRepository.save(new SecessionEntity(email));
+
+    return new BaseResultDto();
   }
 }

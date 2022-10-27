@@ -11,9 +11,10 @@ import com.fanfixiv.auth.entity.ProfileEntity;
 import com.fanfixiv.auth.entity.RoleEntity;
 import com.fanfixiv.auth.entity.UserEntity;
 import com.fanfixiv.auth.exception.DuplicateException;
-import com.fanfixiv.auth.interfaces.UserRoleEnum;
+import com.fanfixiv.auth.exception.SecessionAccountExcetpion;
 import com.fanfixiv.auth.repository.ProfileRepository;
 import com.fanfixiv.auth.repository.RedisEmailRepository;
+import com.fanfixiv.auth.repository.SecessionRepository;
 import com.fanfixiv.auth.repository.UserRepository;
 import com.fanfixiv.auth.requester.RestRequester;
 import com.fanfixiv.auth.utils.RandomProvider;
@@ -42,6 +43,8 @@ public class RegisterService {
 
   private final UserRepository userRepository;
 
+  private final SecessionRepository secessionRepository;
+
   private final RedisEmailRepository redisEmailRepository;
 
   private final MailService mailService;
@@ -67,6 +70,10 @@ public class RegisterService {
     if (!redisDto.isSuccess()) {
       throw new DuplicateException("본인인증이 되어있지 않습니다.");
     }
+    if (secessionRepository.existsByEmail(redisDto.getEmail()) &&
+        secessionRepository.findByEmail(redisDto.getEmail()).getSecDate().plusDays(30).isAfter(LocalDate.now())) {
+      throw new SecessionAccountExcetpion("탈퇴한 계정은 30일간 재가입 할수 없습니다.");
+    }
 
     String profileImgUrl = "";
     if (dto.getProfileImg() != null) {
@@ -86,7 +93,7 @@ public class RegisterService {
         .email(redisDto.getEmail())
         .pw(dto.getPw())
         .profile(profile)
-        .role(Arrays.asList(new RoleEntity(UserRoleEnum.ROLE_USER)))
+        .role(Arrays.asList(new RoleEntity()))
         .build();
 
     user.hashPassword(passwordEncoder);
