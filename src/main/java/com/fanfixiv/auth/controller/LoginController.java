@@ -13,7 +13,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -58,7 +57,7 @@ public class LoginController {
 
   @PostMapping("/secession")
   public BaseResultDto secession(@AuthenticationPrincipal User user,
-      @RequestBody(required = false) @Nullable @Valid SecessionDto dto) {
+      @RequestBody(required = false) @Valid SecessionDto dto) {
     return loginService.doSecession(user, dto);
   }
 }
