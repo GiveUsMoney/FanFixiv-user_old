@@ -10,8 +10,7 @@ import com.fanfixiv.auth.dto.register.RegisterResultDto;
 import com.fanfixiv.auth.entity.ProfileEntity;
 import com.fanfixiv.auth.entity.RoleEntity;
 import com.fanfixiv.auth.entity.UserEntity;
-import com.fanfixiv.auth.exception.DuplicateException;
-import com.fanfixiv.auth.exception.SecessionAccountExcetpion;
+import com.fanfixiv.auth.exception.BadRequestException;
 import com.fanfixiv.auth.repository.ProfileRepository;
 import com.fanfixiv.auth.repository.RedisEmailRepository;
 import com.fanfixiv.auth.repository.SecessionRepository;
@@ -58,21 +57,21 @@ public class RegisterService {
   @Transactional
   public RegisterResultDto register(RegisterDto dto) {
     if (profileRepository.existsByNickname(dto.getNickname())) {
-      throw new DuplicateException("이미 사용중인 닉네임입니다.");
+      throw new BadRequestException("이미 사용중인 닉네임입니다.");
     }
 
     Optional<RedisEmailAuthDto> _redisDto = redisEmailRepository.findById(dto.getUuid());
-    RedisEmailAuthDto redisDto = _redisDto.orElseThrow(() -> new DuplicateException("본인인증이 되어있지 않습니다."));
+    RedisEmailAuthDto redisDto = _redisDto.orElseThrow(() -> new BadRequestException("본인인증이 되어있지 않습니다."));
 
     if (userRepository.existsByEmail(redisDto.getEmail())) {
-      throw new DuplicateException("이미 사용중인 이메일입니다.");
+      throw new BadRequestException("이미 사용중인 이메일입니다.");
     }
     if (!redisDto.isSuccess()) {
-      throw new DuplicateException("본인인증이 되어있지 않습니다.");
+      throw new BadRequestException("본인인증이 되어있지 않습니다.");
     }
     if (secessionRepository.existsByEmail(redisDto.getEmail()) &&
         secessionRepository.findByEmail(redisDto.getEmail()).getSecDate().plusDays(30).isAfter(LocalDate.now())) {
-      throw new SecessionAccountExcetpion("탈퇴한 계정은 30일간 재가입 할수 없습니다.");
+      throw new BadRequestException("탈퇴한 계정은 30일간 재가입 할수 없습니다.");
     }
 
     String profileImgUrl = "";
@@ -111,7 +110,7 @@ public class RegisterService {
   @Transactional
   public CertEmailResultDto certEmail(String email) {
     if (userRepository.existsByEmail(email)) {
-      throw new DuplicateException("이미 사용중인 이메일입니다.");
+      throw new BadRequestException("이미 사용중인 이메일입니다.");
     }
 
     String uuid = RandomProvider.getUUID();
