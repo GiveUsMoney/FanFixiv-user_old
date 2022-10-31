@@ -84,10 +84,7 @@ public class LoginE2ETests {
 
     userRepository.save(user);
 
-    LoginDto lgdto = new LoginDto();
-
-    lgdto.setId(email);
-    lgdto.setPw(pw);
+    LoginDto lgdto = new LoginDto(email, pw);
 
     ExtractableResponse<Response> res = given()
         .contentType("application/json")
@@ -109,10 +106,7 @@ public class LoginE2ETests {
     String email = "test@example.com";
     String pw = "not_password";
 
-    LoginDto lgdto = new LoginDto();
-
-    lgdto.setId(email);
-    lgdto.setPw(pw);
+    LoginDto lgdto = new LoginDto(email, pw);
 
     given()
         .contentType("application/json")
@@ -129,9 +123,7 @@ public class LoginE2ETests {
 
     String email = "test@example.com";
 
-    LoginDto lgdto = new LoginDto();
-
-    lgdto.setId(email);
+    LoginDto lgdto = new LoginDto(email, null);
 
     given()
         .contentType("application/json")

@@ -2,10 +2,10 @@ package com.fanfixiv.auth.dto.login;
 
 import javax.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Data
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 public class LoginDto {
