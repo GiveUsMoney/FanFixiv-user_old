@@ -17,6 +17,16 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-latest
+
+    services:
+      rabbitmq:
+        image: rabbitmq:3.8
+        env:
+          RABBITMQ_DEFAULT_USER: guest
+          RABBITMQ_DEFAULT_PASS: guest
+        ports:
+          - 5672
+
     steps:
       - uses: actions/checkout@v3
       - name: Set up JDK 17
@@ -48,3 +58,7 @@ jobs:
           MAIN_SERVER_URL: ${{ secrets.MAIN_SERVER_URL }}
           S3_URL: ${{ secrets.S3_URL }}
           REDIS_HOST: 127.0.0.1
+          MQ_HOST: localhost,
+          MQ_PORT: 5672,
+          MQ_USER: guest,
+          MQ_PW: guest
