@@ -53,9 +53,9 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         secessionRepository.findByEmail(user.getEmail()).getSecDate().plusDays(30).isBefore(LocalDate.now()))) {
       if (!userRepository.existsByEmail(user.getEmail())) {
         userRepository.save(user);
-    } else {
-      user = userRepository.findByEmail(user.getEmail());
-    }
+      } else {
+        user = userRepository.findByEmail(user.getEmail());
+      }
 
       // 토큰 발급
       List<UserRoleEnum> roles = user.getRole().stream().map(item -> item.getRole()).toList();
