@@ -20,7 +20,7 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 
 import com.fanfixiv.auth.dto.register.RegisterDto;
 import com.fanfixiv.auth.entity.ProfileEntity;
-import com.fanfixiv.auth.repository.ProfileRepository;
+import com.fanfixiv.auth.repository.jpa.ProfileRepository;
 import com.fanfixiv.auth.service.MailService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -88,16 +88,17 @@ public class RegisterE2ETests {
   @Order(2)
   @DisplayName("GET /register/cert-email 200")
   void certEmail_e2e_200() {
-    
+
     doAnswer(
-      new Answer<Object>() {
-      public Object answer(InvocationOnMock invocation) {
-          RegisterE2ETests.num = (String)invocation.getArgument(0);
-          return null;
-      }})
-    .when(mailService)
-    .sendEmailAuthMail(anyString(), anyList());
-    
+        new Answer<Object>() {
+          public Object answer(InvocationOnMock invocation) {
+            RegisterE2ETests.num = (String) invocation.getArgument(0);
+            return null;
+          }
+        })
+        .when(mailService)
+        .sendEmailAuthMail(anyString(), anyList());
+
     RegisterE2ETests.uuid = given()
         .param("email", "register@test.com")
         .get("/register/cert-email")

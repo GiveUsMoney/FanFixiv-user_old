@@ -25,7 +25,7 @@ import com.fanfixiv.auth.dto.register.CertEmailDto;
 import com.fanfixiv.auth.dto.reset.ResetTokenDto;
 import com.fanfixiv.auth.entity.ProfileEntity;
 import com.fanfixiv.auth.entity.UserEntity;
-import com.fanfixiv.auth.repository.UserRepository;
+import com.fanfixiv.auth.repository.jpa.UserRepository;
 import com.fanfixiv.auth.service.MailService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -67,7 +67,7 @@ public class ResetE2ETests {
   @Order(1)
   @DisplayName("POST /reset/email 200")
   void resetEmail_e2e_200() {
-    
+
     String email = "test@example.com";
     String pw = "password";
     String nick = "테스트계정";
@@ -88,16 +88,17 @@ public class ResetE2ETests {
     userRepository.save(user);
 
     doAnswer(
-      new Answer<Object>() {
-      public Object answer(InvocationOnMock invocation) {
-          ResetE2ETests.uuid = (String)invocation.getArgument(0);
-          return null;
-      }})
-    .when(mailService)
-    .sendResetPwMail(anyString(), anyList());
-    
+        new Answer<Object>() {
+          public Object answer(InvocationOnMock invocation) {
+            ResetE2ETests.uuid = (String) invocation.getArgument(0);
+            return null;
+          }
+        })
+        .when(mailService)
+        .sendResetPwMail(anyString(), anyList());
+
     CertEmailDto dto = new CertEmailDto(email);
-    
+
     given()
         .contentType("application/json")
         .body(this.objToJson(dto))
