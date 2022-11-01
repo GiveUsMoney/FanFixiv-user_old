@@ -19,8 +19,8 @@ import org.springframework.stereotype.Component;
 import com.fanfixiv.auth.dto.redis.RedisAuthDto;
 import com.fanfixiv.auth.entity.UserEntity;
 import com.fanfixiv.auth.interfaces.UserRoleEnum;
-import com.fanfixiv.auth.repository.RedisAuthRepository;
-import com.fanfixiv.auth.repository.UserRepository;
+import com.fanfixiv.auth.repository.jpa.UserRepository;
+import com.fanfixiv.auth.repository.redis.RedisAuthRepository;
 import com.fanfixiv.auth.utils.JwtTokenProvider;
 
 import lombok.RequiredArgsConstructor;

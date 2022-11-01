@@ -15,8 +15,8 @@ import com.fanfixiv.auth.dto.reset.ResetTokenDto;
 import com.fanfixiv.auth.entity.UserEntity;
 import com.fanfixiv.auth.exception.EmailNotExisitException;
 import com.fanfixiv.auth.exception.TokenNotValidException;
-import com.fanfixiv.auth.repository.RedisResetRepository;
-import com.fanfixiv.auth.repository.UserRepository;
+import com.fanfixiv.auth.repository.jpa.UserRepository;
+import com.fanfixiv.auth.repository.redis.RedisResetRepository;
 import com.fanfixiv.auth.utils.RandomProvider;
 
 import lombok.RequiredArgsConstructor;

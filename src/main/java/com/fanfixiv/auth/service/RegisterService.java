@@ -12,10 +12,10 @@ import com.fanfixiv.auth.entity.RoleEntity;
 import com.fanfixiv.auth.entity.UserEntity;
 import com.fanfixiv.auth.exception.DuplicateException;
 import com.fanfixiv.auth.interfaces.UserRoleEnum;
-import com.fanfixiv.auth.repository.ProfileRepository;
-import com.fanfixiv.auth.repository.RedisEmailRepository;
-import com.fanfixiv.auth.repository.UserRepository;
-import com.fanfixiv.auth.requester.RestRequester;
+import com.fanfixiv.auth.repository.jpa.ProfileRepository;
+import com.fanfixiv.auth.repository.jpa.UserRepository;
+import com.fanfixiv.auth.repository.redis.RedisEmailRepository;
+import com.fanfixiv.auth.requester.MQRequester;
 import com.fanfixiv.auth.utils.RandomProvider;
 import com.fanfixiv.auth.utils.TimeProvider;
 
@@ -48,7 +48,7 @@ public class RegisterService {
 
   private final BCryptPasswordEncoder passwordEncoder;
 
-  private final RestRequester restRequester;
+  private final MQRequester mqRequester;
 
   private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
@@ -70,7 +70,7 @@ public class RegisterService {
 
     String profileImgUrl = "";
     if (dto.getProfileImg() != null) {
-      profileImgUrl = restRequester.uploadProfileImg(dto.getProfileImg());
+      profileImgUrl = mqRequester.profileImgForm(dto.getProfileImg());
     }
 
     LocalDate birth = LocalDate.parse(dto.getBirth(), this.formatter);
