@@ -3,14 +3,11 @@ package com.fanfixiv.auth.requester;
 import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import com.fanfixiv.auth.dto.server.BaseResultFormDto;
-import com.fanfixiv.auth.dto.server.ProfileFormDto;
-import com.fanfixiv.auth.dto.server.ProfileFormResultDto;
 import com.fanfixiv.auth.exception.MicroRequestException;
 
 import lombok.RequiredArgsConstructor;
@@ -19,15 +16,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class RestRequester {
 
-  @Value("${micro.main-server.url}")
-  private String mainServerUrl;
-
   @Value("${aws.s3.url}")
   private String s3Url;
 
   private final RestTemplate restTemplate;
-
-  private final RedisTemplate<String, String> redisTemplate;
 
   private <T extends BaseResultFormDto, E> T postRequest(String uri, E dto, Class<T> clazz) {
     T result;
@@ -49,17 +41,6 @@ public class RestRequester {
           result == null ? null : Arrays.asList(result.getMessage()));
 
     return result;
-  }
-
-  public String uploadProfileImg(String key) {
-    String uri = mainServerUrl + "profile-img/form"; // or any other uri
-
-    ProfileFormResultDto result = this.postRequest(
-        uri,
-        new ProfileFormDto(key, redisTemplate.opsForValue().get("REDIS_AUTH")),
-        ProfileFormResultDto.class);
-
-    return s3Url + result.getKey();
   }
 
 }
