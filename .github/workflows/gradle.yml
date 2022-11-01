@@ -38,13 +38,12 @@ jobs:
             test
             -i
         env:
+          SECRET: ${{ secrets.SECRET }}
           AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
           AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
-          SECRET: ${{ secrets.SECRET }}
           TWITTER_CLIENT_ID: ${{ secrets.TWITTER_CLIENT_ID }}
           TWITTER_CLIENT_SECRET: ${{ secrets.TWITTER_CLIENT_SECRET }}
-          FRONTEND_URL: ${{ secrets.FRONTEND_URL }}
-          FRONTEND_ORIGIN: ${{ secrets.FRONTEND_ORIGIN }}
-          MAIN_SERVER_URL: ${{ secrets.MAIN_SERVER_URL }}
           S3_URL: ${{ secrets.S3_URL }}
+          FRONTEND_URL: https://giveusmoney.github.io/FanFixiv-user-page
+          FRONTEND_ORIGIN: https://giveusmoney.github.io/
           REDIS_HOST: 127.0.0.1
