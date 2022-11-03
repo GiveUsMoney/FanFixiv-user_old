@@ -39,11 +39,13 @@ public class UserEntity extends BaseEntity {
   @Column
   private String pw;
 
-  @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+  @OneToMany(fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST, CascadeType.REMOVE })
   @JoinColumn(name = "user_seq")
   private List<RoleEntity> role;
 
-  @OneToOne(cascade = CascadeType.PERSIST)
+  @OneToOne(cascade = {
+      CascadeType.PERSIST,
+      CascadeType.REMOVE })
   @JoinColumn(name = "profile_seq")
   private ProfileEntity profile;
 

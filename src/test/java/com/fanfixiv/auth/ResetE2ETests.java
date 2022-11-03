@@ -70,7 +70,7 @@ public class ResetE2ETests {
     
     String email = "test@example.com";
     String pw = "password";
-    String nick = "테스트계정";
+    String nick = "비밀번호 초기화 테스트계정";
 
     ProfileEntity profile = ProfileEntity.builder()
         .nickname(nick)
@@ -108,7 +108,7 @@ public class ResetE2ETests {
 
   @Test
   @Order(1)
-  @DisplayName("POST /reser/email 400")
+  @DisplayName("POST /reset/email 400")
   void resetEmail_e2e_400() {
     CertEmailDto dto = new CertEmailDto("noemail@example.com");
     given()
