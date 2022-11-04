@@ -2,8 +2,11 @@ package com.fanfixiv.auth.service;
 
 import com.fanfixiv.auth.details.User;
 import com.fanfixiv.auth.entity.UserEntity;
+
 import com.fanfixiv.auth.exception.UnauthorizedException;
-import com.fanfixiv.auth.repository.UserRepository;
+
+import com.fanfixiv.auth.repository.jpa.UserRepository;
+
 import lombok.RequiredArgsConstructor;
 
 import javax.transaction.Transactional;
