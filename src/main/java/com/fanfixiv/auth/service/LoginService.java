@@ -61,7 +61,7 @@ public class LoginService {
     String token = jwtTokenProvider.createToken(user.getSeq(), roles);
     String refresh = jwtTokenProvider.createRefreshToken();
 
-    redisAuthRepository.save(RedisAuthDto.builder().refreshToken(refresh).jwtToken(token).build());
+    redisAuthRepository.save(new RedisAuthDto(refresh, token));
 
     response.setHeader(HttpHeaders.SET_COOKIE, jwtTokenProvider.createRefreshTokenCookie(refresh).toString());
     return new LoginResultDto(token);
@@ -91,7 +91,7 @@ public class LoginService {
 
     if (authDto.getJwtToken().equals(token)) {
       token = jwtTokenProvider.createTokenWithInVailedToken(token);
-      redisAuthRepository.save(RedisAuthDto.builder().refreshToken(refresh).jwtToken(token).build());
+      redisAuthRepository.save(new RedisAuthDto(refresh, token));
       return new LoginResultDto(token);
     }
 

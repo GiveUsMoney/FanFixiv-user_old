@@ -37,10 +37,7 @@ public class ResetService {
     if (userRepository.existsByEmail(dto.getEmail())) {
       String uuid = RandomProvider.getUUID();
 
-      RedisResetDto rDto = RedisResetDto.builder()
-          .uuid(uuid)
-          .email(dto.getEmail())
-          .build();
+      RedisResetDto rDto = new RedisResetDto(uuid, dto.getEmail());
 
       redisResetRepository.save(rDto);
 
