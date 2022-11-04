@@ -149,6 +149,7 @@ public class LoginE2ETests {
         .then()
         .statusCode(400);
 
+    redisLoginRepository.deleteAll();
   }
 
   @Test
