@@ -68,7 +68,7 @@ public class ResetE2ETests {
   @DisplayName("POST /reset/email 200")
   void resetEmail_e2e_200() {
 
-    String email = "test@example.com";
+    String email = "reset@example.com";
     String pw = "password";
     String nick = "비밀번호 초기화 테스트계정";
 
@@ -127,7 +127,7 @@ public class ResetE2ETests {
   @DisplayName("POST /reset/pw 200")
   void resetPW_e2e_200() {
 
-    String email = "test@example.com";
+    String email = "reset@example.com";
     String pw = "new_password";
 
     ResetTokenDto dto = new ResetTokenDto(ResetE2ETests.uuid, pw);

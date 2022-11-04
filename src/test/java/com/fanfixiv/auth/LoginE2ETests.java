@@ -69,7 +69,7 @@ public class LoginE2ETests {
   @DisplayName("POST /login 200")
   void doLogin_e2e_200() {
 
-    String email = "test@example.com";
+    String email = "login@example.com";
     String pw = "password";
     String nick = "테스트계정";
 
@@ -109,7 +109,7 @@ public class LoginE2ETests {
   @DisplayName("POST /login 401")
   void doLogin_e2e_401() {
 
-    String email = "test@example.com";
+    String email = "login@example.com";
     String pw = "not_password";
 
     LoginDto lgdto = new LoginDto(email, pw);
@@ -138,7 +138,7 @@ public class LoginE2ETests {
   @DisplayName("POST /login 400")
   void doLogin_e2e_400() {
 
-    String email = "test@example.com";
+    String email = "login@example.com";
 
     LoginDto lgdto = new LoginDto(email, null);
 
