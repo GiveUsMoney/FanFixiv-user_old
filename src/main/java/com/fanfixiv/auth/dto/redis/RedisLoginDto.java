@@ -10,7 +10,7 @@ import org.springframework.data.redis.core.RedisHash;
 
 @Getter
 @Setter
-@RedisHash(value = "login", timeToLive = 60 * 60 * 24 * 14)
+@RedisHash(value = "login", timeToLive = 30 * 60)
 @NoArgsConstructor
 @AllArgsConstructor
 public class RedisLoginDto {

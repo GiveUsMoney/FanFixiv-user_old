@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 public class LoginDto {
 
   @NotEmpty
-  private String id;
+  private String email;
 
   @NotEmpty
   private String pw;
