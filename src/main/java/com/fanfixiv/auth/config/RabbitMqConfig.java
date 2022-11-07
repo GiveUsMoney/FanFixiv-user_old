@@ -10,10 +10,13 @@ import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 @Configuration
 public class RabbitMqConfig {
 
+  private final String DEFAULT_EXCHANGE = "fanfixiv.main";
+
   @Bean
   RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
     RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
     rabbitTemplate.setMessageConverter(new Jackson2JsonMessageConverter());
+    rabbitTemplate.setExchange(DEFAULT_EXCHANGE);
     return rabbitTemplate;
   }
 

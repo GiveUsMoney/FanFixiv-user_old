@@ -9,5 +9,4 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ProfileFormDto {
   private String key;
-  private String auth;
 }

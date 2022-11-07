@@ -12,9 +12,11 @@ import com.fanfixiv.auth.entity.UserEntity;
 import com.fanfixiv.auth.exception.BadRequestException;
 import com.fanfixiv.auth.exception.UnauthorizedException;
 import com.fanfixiv.auth.interfaces.UserRoleEnum;
-import com.fanfixiv.auth.repository.RedisAuthRepository;
-import com.fanfixiv.auth.repository.SecessionRepository;
-import com.fanfixiv.auth.repository.UserRepository;
+
+import com.fanfixiv.auth.repository.jpa.SecessionRepository;
+import com.fanfixiv.auth.repository.jpa.UserRepository;
+import com.fanfixiv.auth.repository.redis.RedisAuthRepository;
+
 import com.fanfixiv.auth.utils.JwtTokenProvider;
 import com.google.common.net.HttpHeaders;
 

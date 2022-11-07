@@ -1,4 +1,4 @@
-package com.fanfixiv.auth.repository;
+package com.fanfixiv.auth.repository.jpa;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

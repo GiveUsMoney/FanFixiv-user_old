@@ -21,7 +21,7 @@ import com.fanfixiv.auth.dto.login.LoginDto;
 import com.fanfixiv.auth.dto.profile.ProfileResultDto;
 import com.fanfixiv.auth.entity.ProfileEntity;
 import com.fanfixiv.auth.entity.UserEntity;
-import com.fanfixiv.auth.repository.UserRepository;
+import com.fanfixiv.auth.repository.jpa.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.restassured.response.ExtractableResponse;

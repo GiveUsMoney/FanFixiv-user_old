@@ -1,4 +1,4 @@
-package com.fanfixiv.auth.repository;
+package com.fanfixiv.auth.repository.redis;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
