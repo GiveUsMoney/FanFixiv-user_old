@@ -38,7 +38,7 @@ public class RestRequester {
     if (result == null || result.getStatus() == 400)
       throw new MicroRequestException(
           "메인서버의 응답이 올바르지 않습니다.",
-          result == null ? null : Arrays.asList(result.getMessage()));
+          result);
 
     return result;
   }

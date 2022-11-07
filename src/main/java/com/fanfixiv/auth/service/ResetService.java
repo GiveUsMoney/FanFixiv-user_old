@@ -13,10 +13,12 @@ import com.fanfixiv.auth.dto.redis.RedisResetDto;
 import com.fanfixiv.auth.dto.register.CertEmailDto;
 import com.fanfixiv.auth.dto.reset.ResetTokenDto;
 import com.fanfixiv.auth.entity.UserEntity;
-import com.fanfixiv.auth.exception.EmailNotExisitException;
-import com.fanfixiv.auth.exception.TokenNotValidException;
+
 import com.fanfixiv.auth.repository.jpa.UserRepository;
 import com.fanfixiv.auth.repository.redis.RedisResetRepository;
+
+import com.fanfixiv.auth.exception.BadRequestException;
+
 import com.fanfixiv.auth.utils.RandomProvider;
 
 import lombok.RequiredArgsConstructor;
@@ -50,7 +52,7 @@ public class ResetService {
       return new BaseResultDto();
     }
 
-    throw new EmailNotExisitException("이메일이 존재하지 않습니다.");
+    throw new BadRequestException("이메일이 존재하지 않습니다.");
 
   }
 
@@ -59,7 +61,7 @@ public class ResetService {
 
     Optional<RedisResetDto> _rDto = redisResetRepository.findById(dto.getToken());
 
-    RedisResetDto rDto = _rDto.orElseThrow(() -> new TokenNotValidException("토큰값이 올바르지 않습니다."));
+    RedisResetDto rDto = _rDto.orElseThrow(() -> new BadRequestException("토큰값이 올바르지 않습니다."));
 
     redisResetRepository.deleteById(rDto.getUuid());
 

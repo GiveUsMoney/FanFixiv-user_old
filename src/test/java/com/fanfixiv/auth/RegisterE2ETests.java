@@ -17,8 +17,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.HttpHeaders;
 
+import com.fanfixiv.auth.dto.login.LoginDto;
 import com.fanfixiv.auth.dto.register.RegisterDto;
+import com.fanfixiv.auth.dto.secession.SecessionDto;
 import com.fanfixiv.auth.entity.ProfileEntity;
 import com.fanfixiv.auth.repository.jpa.ProfileRepository;
 import com.fanfixiv.auth.service.MailService;
@@ -188,7 +191,7 @@ public class RegisterE2ETests {
   void register_e2e_200() {
 
     String pw = "password";
-    String nickname = "테스트계정";
+    String nickname = "회원가입 테스트계정";
     String birth = "2002-08-19";
 
     RegisterDto rgDto = new RegisterDto(
@@ -219,5 +222,43 @@ public class RegisterE2ETests {
         .post("/register")
         .then()
         .statusCode(400);
+  }
+
+  static String token = "";
+
+  @Test
+  @Order(6)
+  @DisplayName("POST /secession")
+  void secession_e2e() {
+
+    String email = "register@test.com";
+    String pw = "password";
+
+    LoginDto lgdto = new LoginDto(email, pw);
+
+    RegisterE2ETests.token = given()
+        .contentType("application/json")
+        .body(this.objToJson(lgdto))
+        .post("/login")
+        .then()
+        .statusCode(200)
+        .extract()
+        .path("token");
+
+    given()
+        .contentType("application/json")
+        .header(HttpHeaders.AUTHORIZATION, "Bearer " + RegisterE2ETests.token)
+        .body(new SecessionDto("wrong password"))
+        .post("/secession")
+        .then()
+        .statusCode(400);
+
+    given()
+        .contentType("application/json")
+        .header(HttpHeaders.AUTHORIZATION, "Bearer " + RegisterE2ETests.token)
+        .body(new SecessionDto(pw))
+        .post("/secession")
+        .then()
+        .statusCode(200);
   }
 }
