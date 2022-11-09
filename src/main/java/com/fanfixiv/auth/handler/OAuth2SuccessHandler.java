@@ -23,6 +23,7 @@ import com.fanfixiv.auth.interfaces.UserRoleEnum;
 import com.fanfixiv.auth.repository.jpa.SecessionRepository;
 import com.fanfixiv.auth.repository.jpa.UserRepository;
 import com.fanfixiv.auth.repository.redis.RedisAuthRepository;
+
 import com.fanfixiv.auth.utils.JwtTokenProvider;
 
 import lombok.RequiredArgsConstructor;
