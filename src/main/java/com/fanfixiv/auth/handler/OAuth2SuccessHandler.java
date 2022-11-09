@@ -64,7 +64,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
       token = jwtTokenProvider.createToken(user.getSeq(), roles);
       refresh = jwtTokenProvider.createRefreshToken();
 
-      redisAuthRepository.save(RedisAuthDto.builder().refreshToken(refresh).jwtToken(token).build());
+      redisAuthRepository.save(new RedisAuthDto(refresh, token));
 
       response.setHeader(HttpHeaders.SET_COOKIE, jwtTokenProvider.createRefreshTokenCookie(refresh).toString());
 

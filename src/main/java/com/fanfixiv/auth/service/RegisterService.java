@@ -11,13 +11,14 @@ import com.fanfixiv.auth.entity.ProfileEntity;
 import com.fanfixiv.auth.entity.RoleEntity;
 import com.fanfixiv.auth.entity.UserEntity;
 
+import com.fanfixiv.auth.exception.BadRequestException;
+
 import com.fanfixiv.auth.repository.jpa.ProfileRepository;
 import com.fanfixiv.auth.repository.jpa.SecessionRepository;
 import com.fanfixiv.auth.repository.jpa.UserRepository;
 import com.fanfixiv.auth.repository.redis.RedisEmailRepository;
 
 import com.fanfixiv.auth.requester.MQRequester;
-import com.fanfixiv.auth.exception.BadRequestException;
 
 import com.fanfixiv.auth.utils.RandomProvider;
 import com.fanfixiv.auth.utils.TimeProvider;

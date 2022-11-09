@@ -14,10 +14,10 @@ import com.fanfixiv.auth.dto.register.CertEmailDto;
 import com.fanfixiv.auth.dto.reset.ResetTokenDto;
 import com.fanfixiv.auth.entity.UserEntity;
 
+import com.fanfixiv.auth.exception.BadRequestException;
+
 import com.fanfixiv.auth.repository.jpa.UserRepository;
 import com.fanfixiv.auth.repository.redis.RedisResetRepository;
-
-import com.fanfixiv.auth.exception.BadRequestException;
 
 import com.fanfixiv.auth.utils.RandomProvider;
 
@@ -40,10 +40,7 @@ public class ResetService {
     if (userRepository.existsByEmail(dto.getEmail())) {
       String uuid = RandomProvider.getUUID();
 
-      RedisResetDto rDto = RedisResetDto.builder()
-          .uuid(uuid)
-          .email(dto.getEmail())
-          .build();
+      RedisResetDto rDto = new RedisResetDto(uuid, dto.getEmail());
 
       redisResetRepository.save(rDto);
 

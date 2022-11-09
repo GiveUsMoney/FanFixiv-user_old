@@ -22,6 +22,7 @@ import com.fanfixiv.auth.dto.profile.ProfileResultDto;
 import com.fanfixiv.auth.entity.ProfileEntity;
 import com.fanfixiv.auth.entity.UserEntity;
 import com.fanfixiv.auth.repository.jpa.UserRepository;
+import com.fanfixiv.auth.repository.redis.RedisLoginRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.restassured.response.ExtractableResponse;
@@ -33,6 +34,9 @@ public class LoginE2ETests {
 
   @Autowired
   UserRepository userRepository;
+
+  @Autowired
+  RedisLoginRepository redisLoginRepository;
 
   @Autowired
   BCryptPasswordEncoder passwordEncoder;
@@ -65,7 +69,7 @@ public class LoginE2ETests {
   @DisplayName("POST /login 200")
   void doLogin_e2e_200() {
 
-    String email = "test@example.com";
+    String email = "login@example.com";
     String pw = "password";
     String nick = "테스트계정";
 
@@ -86,6 +90,8 @@ public class LoginE2ETests {
 
     LoginDto lgdto = new LoginDto(email, pw);
 
+    redisLoginRepository.deleteById(email);
+
     ExtractableResponse<Response> res = given()
         .contentType("application/json")
         .body(this.objToJson(lgdto))
@@ -103,17 +109,28 @@ public class LoginE2ETests {
   @DisplayName("POST /login 401")
   void doLogin_e2e_401() {
 
-    String email = "test@example.com";
+    String email = "login@example.com";
     String pw = "not_password";
 
     LoginDto lgdto = new LoginDto(email, pw);
+
+    for (int i = 0; i < 5; i++) {
+      given()
+          .contentType("application/json")
+          .body(this.objToJson(lgdto))
+          .post("/login")
+          .then()
+          .statusCode(401);
+    }
 
     given()
         .contentType("application/json")
         .body(this.objToJson(lgdto))
         .post("/login")
         .then()
-        .statusCode(401);
+        .statusCode(401)
+        .assertThat()
+        .body("message", equalTo("계속된 로그인 실패로 30분간 로그인이 불가능합니다."));
   }
 
   @Test
@@ -121,7 +138,7 @@ public class LoginE2ETests {
   @DisplayName("POST /login 400")
   void doLogin_e2e_400() {
 
-    String email = "test@example.com";
+    String email = "login@example.com";
 
     LoginDto lgdto = new LoginDto(email, null);
 
@@ -131,6 +148,8 @@ public class LoginE2ETests {
         .post("/login")
         .then()
         .statusCode(400);
+
+    redisLoginRepository.deleteAll();
   }
 
   @Test

@@ -10,11 +10,11 @@ import org.springframework.data.redis.core.RedisHash;
 
 @Getter
 @Setter
-@RedisHash(value = "auth", timeToLive = 60 * 60 * 24 * 14)
+@RedisHash(value = "login", timeToLive = 30 * 60)
 @NoArgsConstructor
 @AllArgsConstructor
-public class RedisAuthDto {
+public class RedisLoginDto {
   @Id
-  private String refreshToken;
-  private String jwtToken;
+  private String email;
+  private int loginCount;
 }
