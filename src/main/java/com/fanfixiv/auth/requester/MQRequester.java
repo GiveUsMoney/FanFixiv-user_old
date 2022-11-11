@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
 
+import com.fanfixiv.auth.dto.action.ActionDto;
 import com.fanfixiv.auth.dto.server.ProfileFormDto;
 import com.fanfixiv.auth.dto.server.ProfileFormResultDto;
 
@@ -35,6 +36,10 @@ public class MQRequester {
     }
 
     return s3Url + result.getKey();
+  }
+
+  public void sendAction(ActionDto action) {
+    rabbitTemplate.convertAndSend("fanfixiv.admin", "user.action", action);
   }
 
 }

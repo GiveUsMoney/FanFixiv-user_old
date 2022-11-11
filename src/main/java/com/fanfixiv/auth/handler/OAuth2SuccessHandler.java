@@ -52,6 +52,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     UserEntity user = UserEntity.of(oAuth2User);
     if (!(secessionRepository.existsByEmail(user.getEmail()) &&
         secessionRepository.findByEmail(user.getEmail()).getSecDate().plusDays(30).isBefore(LocalDate.now()))) {
+
       if (!userRepository.existsByEmail(user.getEmail())) {
         userRepository.save(user);
       } else {
