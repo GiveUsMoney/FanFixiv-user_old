@@ -59,12 +59,9 @@ public class JwtTokenProvider {
 
   public String createTokenWithInVailedToken(String token) {
     Claims claims = Jwts.claims();
-    try 
-    {
+    try {
       claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
-    }    
-    catch ( ExpiredJwtException ex )
-    {
+    } catch (ExpiredJwtException ex) {
       claims = ex.getClaims();
     }
 

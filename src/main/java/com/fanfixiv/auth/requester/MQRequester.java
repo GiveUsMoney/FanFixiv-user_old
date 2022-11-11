@@ -22,6 +22,7 @@ public class MQRequester {
 
   public String profileImgForm(String key) {
     ProfileFormResultDto result = rabbitTemplate.<ProfileFormResultDto>convertSendAndReceiveAsType(
+        "fanfixiv.main",
         "profile-img.form",
         new ProfileFormDto(key),
         new ParameterizedTypeReference<ProfileFormResultDto>() {
