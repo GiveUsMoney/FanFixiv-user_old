@@ -44,4 +44,5 @@ public class ProfileEntity extends BaseEntity {
   @Column
   @ColumnDefault("false")
   private boolean isTr;
+
 }

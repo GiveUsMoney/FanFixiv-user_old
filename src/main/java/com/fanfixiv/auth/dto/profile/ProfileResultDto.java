@@ -18,6 +18,7 @@ public class ProfileResultDto {
   private String profileImg;
   private String descript;
   private boolean isTr;
+  private boolean isSocial;
 
   public ProfileResultDto(UserEntity user) {
     this.email = user.getEmail();
@@ -27,6 +28,7 @@ public class ProfileResultDto {
     this.profileImg = user.getProfile().getProfileImg();
     this.descript = user.getProfile().getDescript();
     this.isTr = user.getProfile().isTr();
+    this.isSocial = user.isSocial();
   }
 
 }

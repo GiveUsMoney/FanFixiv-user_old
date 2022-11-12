@@ -96,6 +96,7 @@ public class RegisterService {
         .email(redisDto.getEmail())
         .pw(dto.getPw())
         .profile(profile)
+        .isSocial(false)
         .role(Arrays.asList(new RoleEntity()))
         .build();
 

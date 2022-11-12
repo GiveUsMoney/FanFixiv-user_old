@@ -1,6 +1,6 @@
 package com.fanfixiv.auth.entity;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -39,6 +39,9 @@ public class UserEntity extends BaseEntity {
   @Column
   private String pw;
 
+  @Column
+  private boolean isSocial;
+
   @OneToMany(fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST, CascadeType.REMOVE })
   @JoinColumn(name = "user_seq")
   private List<RoleEntity> role;
@@ -69,15 +72,13 @@ public class UserEntity extends BaseEntity {
         .isTr(false)
         .build();
 
-    RoleEntity role = new RoleEntity();
-
-    List<RoleEntity> roleLst = new ArrayList<RoleEntity>();
-    roleLst.add(role);
+    List<RoleEntity> roleLst = Arrays.asList(new RoleEntity());
 
     return UserEntity
         .builder()
         .email(email)
         .pw(pw)
+        .isSocial(true)
         .profile(profile)
         .role(roleLst)
         .build();
