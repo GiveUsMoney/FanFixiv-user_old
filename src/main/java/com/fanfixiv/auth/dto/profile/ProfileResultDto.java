@@ -16,6 +16,7 @@ public class ProfileResultDto {
   private LocalDateTime nnMdDate;
   private LocalDate birth;
   private String profileImg;
+  private String profileImgW100;
   private String descript;
   private boolean isTr;
   private boolean isSocial;
@@ -26,6 +27,9 @@ public class ProfileResultDto {
     this.nnMdDate = user.getProfile().getNnMdDate();
     this.birth = user.getProfile().getBirth();
     this.profileImg = user.getProfile().getProfileImg();
+    this.profileImgW100 = (user.isSocial() && this.profileImg != null)
+        ? this.profileImg
+        : this.profileImg.replace("/origin/", "/w_100/");
     this.descript = user.getProfile().getDescript();
     this.isTr = user.getProfile().isTr();
     this.isSocial = user.isSocial();
