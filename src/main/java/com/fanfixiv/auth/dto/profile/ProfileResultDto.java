@@ -20,6 +20,7 @@ public class ProfileResultDto {
   private String descript;
   private boolean isTr;
   private boolean isSocial;
+  private boolean isNotice;
 
   public ProfileResultDto(UserEntity user) {
     this.email = user.getEmail();
@@ -33,6 +34,7 @@ public class ProfileResultDto {
     this.descript = user.getProfile().getDescript();
     this.isTr = user.getProfile().isTr();
     this.isSocial = user.isSocial();
+    this.isNotice = user.getNotice().stream().filter(x -> !x.isChecked()).toList().size() > 0;
   }
 
 }

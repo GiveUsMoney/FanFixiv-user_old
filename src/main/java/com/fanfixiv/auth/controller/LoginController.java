@@ -52,7 +52,7 @@ public class LoginController {
   @GetMapping("/profile")
   public ProfileResultDto profile(@AuthenticationPrincipal User user)
       throws Exception {
-    return new ProfileResultDto(user.getUser());
+    return loginService.toProfile(user);
   }
 
   @PostMapping("/secession")

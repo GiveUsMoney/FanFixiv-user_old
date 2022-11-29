@@ -1,6 +1,7 @@
 package com.fanfixiv.auth.controller.advice;
 
 import com.fanfixiv.auth.controller.LoginController;
+import com.fanfixiv.auth.controller.NoticeController;
 import com.fanfixiv.auth.controller.RegisterController;
 import com.fanfixiv.auth.controller.ResetController;
 import com.fanfixiv.auth.exception.BadRequestException;
@@ -20,7 +21,12 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.InitBinder;
 
-@ControllerAdvice(basePackageClasses = { LoginController.class, RegisterController.class, ResetController.class })
+@ControllerAdvice(basePackageClasses = {
+    LoginController.class,
+    RegisterController.class,
+    ResetController.class,
+    NoticeController.class
+})
 public class GlobalControllerAdvice {
 
   @InitBinder

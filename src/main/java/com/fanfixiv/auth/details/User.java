@@ -26,10 +26,7 @@ public class User implements UserDetails {
 
   private List<SimpleGrantedAuthority> roles;
 
-  private UserEntity user;
-
   public User(UserEntity user) {
-    this.user = user;
     this.userSeq = user.getSeq();
     this.userEmail = user.getEmail();
     this.roles = user.getRole().stream().map(item -> new SimpleGrantedAuthority(item.getRole().name())).toList();

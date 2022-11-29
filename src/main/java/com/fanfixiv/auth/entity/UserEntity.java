@@ -52,6 +52,9 @@ public class UserEntity extends BaseEntity {
   @JoinColumn(name = "profile_seq")
   private ProfileEntity profile;
 
+  @OneToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, mappedBy = "user")
+  private List<NoticeEntity> notice;
+
   public static UserEntity of(OAuth2User oauth2) {
 
     return UserEntity.of(
