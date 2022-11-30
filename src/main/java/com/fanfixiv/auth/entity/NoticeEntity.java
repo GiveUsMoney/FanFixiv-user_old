@@ -6,6 +6,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -32,6 +33,7 @@ public class NoticeEntity extends BaseEntity {
   private boolean toAll;
 
   @Column
+  @ColumnDefault(value = "false")
   private boolean checked;
 
   @ManyToOne
