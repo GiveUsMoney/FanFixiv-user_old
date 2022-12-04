@@ -20,6 +20,7 @@ public class ProfileResultDto {
   private String descript;
   private boolean isTr;
   private boolean isSocial;
+  private boolean isNotice;
 
   public ProfileResultDto(UserEntity user) {
     this.email = user.getEmail();
@@ -27,12 +28,15 @@ public class ProfileResultDto {
     this.nnMdDate = user.getProfile().getNnMdDate();
     this.birth = user.getProfile().getBirth();
     this.profileImg = user.getProfile().getProfileImg();
-    this.profileImgW100 = (user.isSocial() && this.profileImg != null)
+    this.profileImgW100 = (user.isSocial() || this.profileImg == null)
         ? this.profileImg
         : this.profileImg.replace("/origin/", "/w_100/");
     this.descript = user.getProfile().getDescript();
     this.isTr = user.getProfile().isTr();
     this.isSocial = user.isSocial();
+    this.isNotice = user.getNotice() != null
+        ? user.getNotice().stream().filter(x -> !x.isChecked()).toList().size() > 0
+        : false;
   }
 
 }

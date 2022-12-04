@@ -5,6 +5,7 @@ import com.fanfixiv.auth.dto.BaseResultDto;
 import com.fanfixiv.auth.dto.login.LoginDto;
 import com.fanfixiv.auth.dto.login.LoginResultDto;
 import com.fanfixiv.auth.dto.login.LogoutResultDto;
+import com.fanfixiv.auth.dto.profile.ProfileResultDto;
 import com.fanfixiv.auth.dto.redis.RedisAuthDto;
 import com.fanfixiv.auth.dto.redis.RedisLoginDto;
 import com.fanfixiv.auth.dto.secession.SecessionDto;
@@ -140,5 +141,13 @@ public class LoginService {
     secessionRepository.save(new SecessionEntity(email));
 
     return new BaseResultDto();
+  }
+
+  @Transactional
+  public ProfileResultDto toProfile(User user) {
+    return new ProfileResultDto(
+        userRepository.findById(user.getUserSeq())
+            .orElseThrow(
+                () -> new UnauthorizedException("토큰값이 올바르지 않습니다.")));
   }
 }
