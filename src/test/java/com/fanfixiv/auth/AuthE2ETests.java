@@ -13,7 +13,8 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class AuthE2ETests {
 
-  @LocalServerPort private int _port;
+  @LocalServerPort
+  private int _port;
 
   @BeforeEach
   public void setUp() throws Exception {
@@ -27,7 +28,7 @@ public class AuthE2ETests {
         .then()
         .statusCode(200)
         .assertThat()
-        .body("content", equalTo("Hello World!"))
+        .body("content", equalTo("Hello World!!!"))
         .body("id", equalTo(0));
   }
 }

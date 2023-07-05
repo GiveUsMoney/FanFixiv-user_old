@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+  </head>
+  <body style="padding: 0; margin: 0">
+    <div
+      style="
+        display: flex;
+        justify-items: center;
+        justify-content: space-around;
+      "
+    >
+      <table
+        cellpadding="0"
+        cellspacing="0"
+        style="
+          border: solid;
+          border-color: #fbcece;
+          border-radius: 10px;
+          border-width: 2px;
+          width: 600px;
+          padding: 20px 40px;
+        "
+      >
+        <tr cellpadding="0" cellspacing="0">
+          <td
+            cellpadding="0"
+            cellspacing="0"
+            style="font-family: Impact; font-size: 56px; color: #af3030"
+          >
+            FanFixiv
+          </td>
+        </tr>
+        <tr cellpadding="0" cellspacing="0" style="height: 20px"></tr>
+        <tr cellpadding="0" cellspacing="0">
+          <td
+            cellpadding="0"
+            cellspacing="0"
+            style="
+              font-family: Inter;
+              font-size: 36px;
+              font-weight: bold;
+              color: #ff8484;
+            "
+          >
+            본인인증 이메일
+          </td>
+        </tr>
+        <tr cellpadding="0" cellspacing="0" style="height: 20px"></tr>
+        <tr cellpadding="0" cellspacing="0">
+          <td
+            cellpadding="0"
+            cellspacing="0"
+            style="text-align: center; vertical-align: middle"
+          >
+            <table
+              cellpadding="0"
+              cellspacing="0"
+              style="
+                display: inline-block;
+                padding-left: 40px;
+                padding-right: 40px;
+                border-radius: 10px;
+                background-color: #d9d9d9;
+                color: #ff8484;
+                font-family: Inter;
+                font-weight: bold;
+                font-size: 96px;
+              "
+            >
+              <tr>
+                <td th:text="${number}"></td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr cellpadding="0" cellspacing="0" style="height: 30px"></tr>
+        <tr cellpadding="0" cellspacing="0">
+          <td
+            cellpadding="0"
+            cellspacing="0"
+            style="font-size: 16px; font-style: Inter"
+          >
+            FanFixiv가입을 환영합니다.<br />
+            본인인증을 위해서 아래의 번호를 회원가입 창에 입력해 주세요.<br />
+            본 이메일의 번호는 3분간 유효합니다.<br />
+            인증하신 뒤 로그인이 가능합니다.
+          </td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,44 @@
+{
+  "properties": [
+    {
+      "name": "jwt.tokenvalidtime",
+      "type": "java.lang.Long",
+      "description": "JWT 만료 시간"
+    },
+    {
+      "name": "jwt.refresh.tokenvalidtime",
+      "type": "java.lang.Long",
+      "description": "refresh token 만료 시간"
+    },
+    {
+      "name": "jwt.secret",
+      "type": "java.lang.String",
+      "description": "JWT 보안 코드"
+    },
+    {
+      "name": "aws.ses.access-key",
+      "type": "java.lang.String",
+      "description": "AWS 접근 키"
+    },
+    {
+      "name": "aws.ses.secret-key",
+      "type": "java.lang.String",
+      "description": "AWS 접근 키"
+    },
+    {
+      "name": "micro.frontend.origin",
+      "type": "java.lang.String",
+      "description": "프론트엔드 오리진"
+    },
+    {
+      "name": "micro.frontend.url",
+      "type": "java.lang.String",
+      "description": "프론트엔드 URL"
+    },
+    {
+      "name": "aws.s3.url",
+      "type": "java.lang.String",
+      "description": "s3 URL"
+    }
+  ]
+}

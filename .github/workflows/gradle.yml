@@ -9,28 +9,55 @@ name: Java CI Test e2e
 
 on:
   pull_request:
-    branches: [ "develop" ]
+    branches: ["develop"]
 
 permissions:
   contents: read
 
 jobs:
   test:
-
     runs-on: ubuntu-latest
 
+    services:
+      rabbitmq:
+        image: rabbitmq:3.8
+        env:
+          RABBITMQ_DEFAULT_USER: guest
+          RABBITMQ_DEFAULT_PASS: guest
+        ports:
+          - 5672:5672
+
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up JDK 17
-      uses: actions/setup-java@v3
-      with:
-        java-version: '17'
-        distribution: 'temurin'
+      - uses: actions/checkout@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: "17"
+          distribution: "temurin"
 
-    - name: Run chmod to make gradlew executable
-      run: chmod +x ./gradlew
+      - name: Start Redis
+        uses: supercharge/redis-github-action@1.4.0
 
-    - name: Test with Gradle
-      uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
-      with:
-        arguments: test
+      - name: Run chmod to make gradlew executable
+        run: chmod +x ./gradlew
+
+      - name: Test with Gradle
+        uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
+        with:
+          arguments: |
+            test
+            -i
+        env:
+          SECRET: ${{ secrets.SECRET }}
+          AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+          AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
+          TWITTER_CLIENT_ID: ${{ secrets.TWITTER_CLIENT_ID }}
+          TWITTER_CLIENT_SECRET: ${{ secrets.TWITTER_CLIENT_SECRET }}
+          S3_URL: ${{ secrets.S3_URL }}
+          FRONTEND_URL: https://giveusmoney.github.io/FanFixiv-user-page
+          FRONTEND_ORIGIN: https://giveusmoney.github.io/
+          REDIS_HOST: 127.0.0.1
+          MQ_HOST: localhost
+          MQ_PORT: 5672
+          MQ_USER: guest
+          MQ_PW: guest
